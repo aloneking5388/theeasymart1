@@ -33,13 +33,8 @@ export async function GET( req: NextRequest) {
           name: customer.name,
           email: customer.email,
           role: customer.role,
-          status: customer.status,
-          level: customer.level,
           profileImage: customer?.profileImage,
-          earnings: customer.earnings,
           shippingInfo: customer.shippingInfo,
-          referralCode: customer.referralCode,
-          referralCount: customer.referralCount,
         },
       },
       { status: 200 }
