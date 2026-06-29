@@ -66,8 +66,8 @@ const ShippingCart = () => {
     0
   );
 
-  if (method === "home delivery" && groupPrice < 50000) {
-    return total + 1000;
+  if (method === "home delivery" && groupPrice < 5000) {
+    return total + 100;
   }
 
   return total;
