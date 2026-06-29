@@ -3,8 +3,6 @@ import { connectDB } from "@/utils/ConnectDB";
 import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
 import User from "@/models/User";
-import CardProduct from "@/models/Card";
-import Wishlist from "@/models/Wishlist";
 import CustomerWallet from "@/models/CustomerWallet";
 
 export async function GET(req: NextRequest) {
@@ -21,7 +19,6 @@ export async function GET(req: NextRequest) {
   try {
     const [
       user,
-      wallet,
       recentOrders,
       totalOrders,
     ] = await Promise.all([
@@ -33,7 +30,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       user,
-      walletBalance: wallet?.amount || 0,
       recentOrders,
       totalOrders,
     }, { status: 200 });
