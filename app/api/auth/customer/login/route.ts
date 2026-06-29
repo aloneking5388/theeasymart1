@@ -33,7 +33,6 @@ export async function POST(req: Request) {
         role: customer.role,
         name: customer.name,
         email: customer.email,
-        status: customer.status,
       },
       process.env.JWT_SECRET!,
       { expiresIn: "7d" }
@@ -48,7 +47,6 @@ export async function POST(req: Request) {
           name: customer.name,
           email: customer.email,
           role: customer.role,
-          status: customer.status,
           
         },
         token,
