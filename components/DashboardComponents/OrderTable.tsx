@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import Pagination from "./Pagination";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { home_orders } from "@/store/Dashboard/homeDashboardSlice";
-import { formatPrice } from "@/utils/formatPrice";
 
 const OrderTable = () => {
   const dispatch = useAppDispatch();
@@ -90,7 +89,7 @@ const OrderTable = () => {
                         #{order._id.slice(-6)}
                       </td>
                       <td className="py-2 px-3 font-medium whitespace-nowrap">
-                        ₹ {formatPrice(order.price)}
+                        ₹ {order.price}
                       </td>
                       <td className="py-2 px-3 font-medium whitespace-nowrap">
                         {order.payment_status || "N/A"}
@@ -134,7 +133,7 @@ const OrderTable = () => {
                                 {order.suborder.map((so, j) => (
                                   <tr key={so._id || j} className="border-t border-slate-700">
                                     <td className="py-1 px-3">{so._id}</td>
-                                    <td className="py-1 px-3">₹ {formatPrice(so.price)}</td>
+                                    <td className="py-1 px-3">₹ {so.price}</td>
                                     <td className="py-1 px-3">{so.payment_status}</td>
                                     <td className="py-1 px-3">{so.delivery_status}</td>
                                   </tr>

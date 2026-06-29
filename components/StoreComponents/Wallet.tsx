@@ -9,7 +9,6 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaWallet } from "react-icons/fa";
-import { formatPrice } from "@/utils/formatPrice";
 import Link from "next/link";
 
 const Wallet = () => {
@@ -92,7 +91,7 @@ const Wallet = () => {
             </span>
           </div>
           <div className="flex flex-col text-slate-600">
-            <h2 className="text-3xl max-md:text-xl font-bold"> <span className="max-md:text-lg text-xl">₹</span> {formatPrice(value)}</h2>
+            <h2 className="text-3xl max-md:text-xl font-bold"> <span className="max-md:text-lg text-xl">₹</span> {value}</h2>
             <span className="max-md:text-sm">{label}</span>
           </div>
         </div>
@@ -196,7 +195,7 @@ const Wallet = () => {
                       {t.type.toUpperCase()}
                     </td>
                     <td className="px-6 max-md:px-2 max-md:text-[8px] py-3">
-                      ₹ {formatPrice(t.amount)}
+                      ₹ {t.amount}
                     </td>
                     <td className="px-6 max-md:px-2 max-md:text-[8px] py-3">
                       {t.purpose.slice(0, 8)}...

@@ -13,7 +13,6 @@ import {
   setShippingDetails,
 } from "@/store/cart/cartSlice";
 import Rating from "./Retings";
-import { formatPrice } from "@/utils/formatPrice";
 import { Loader2 } from "lucide-react";
 import { AiFillGithub, AiFillHeart, AiOutlineTwitter } from "react-icons/ai";
 import Link from "next/link";
@@ -194,15 +193,15 @@ const ProductDetail = () => {
           {product?.discount !== 0 ? (
             <>
               <h2 className="line-through">
-                ₹ {formatPrice(product?.price)}
+                ₹ {product?.price}
               </h2>
               <h2 className="text-black">
-                ₹ {formatPrice(getDiscountedPrice())}
+                ₹ {getDiscountedPrice()}
               </h2>
               <h2>(-{product?.discount}%)</h2>
             </>
           ) : (
-            <h2>Price : ₹ {formatPrice(getOriginalPrice())}</h2>
+            <h2>Price : ₹ {getOriginalPrice()}</h2>
           )}
         </div>
         <div className="flex gap-3 pb-10 border-b">
@@ -252,7 +251,7 @@ const ProductDetail = () => {
             <UniversalShareButtons
               message={`Check out this amazing product: ${
                 product?.name
-              } for ₹ ${formatPrice(product?.price)} only!`}
+              } for ₹ ${product?.price} only!`}
               url={`https://www.The Easy Mart.com/product/details/${product?.slug}`}
             />
           </div>

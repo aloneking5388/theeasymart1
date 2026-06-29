@@ -15,7 +15,6 @@ import {
   cartMessageClear,
 } from "@/store/cart/cartSlice";
 import Rating from "./Retings";
-import { formatPrice } from "@/utils/formatPrice";
 import SkeletonProductCard from "../Skeletons/SkeletonProductCard";
 
 interface DynamicProductListProps {
@@ -162,7 +161,7 @@ const DynamicProductList = ({
                   <div className="flex justify-center items-center gap-2 mt-1">
                     
                     <span className="text-base font-bold text-black">
-                      ₹ {formatPrice(product.price)}
+                      ₹ {product.price}
                     </span>
                   </div>
                   <div className="flex justify-center mt-1">

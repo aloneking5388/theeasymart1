@@ -1,19 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import User from "@/models/User";
-import { v4 as uuidv4 } from "uuid";
 import { connectDB } from "@/utils/ConnectDB";
 import jwt from "jsonwebtoken";
-import { assignUplines  } from "@/utils/mlmUtils";
 import { sendRegisterSuccessEmail } from "@/lib/registerHelper";
 
 export async function POST(req: NextRequest) {
   await connectDB();
 
   try {
-    const { name, email, password, referredBy } = await req.json();
+    const { name, email, password } = await req.json();
 
-    if (!name || !email || !password || !referredBy) {
+    if (!name || !email || !password ) {
       return NextResponse.json(
         { success: false, message: "All fields are required" },
         { status: 400 }
@@ -29,50 +27,17 @@ export async function POST(req: NextRequest) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const referralCode = uuidv4().slice(0, 8);
 
-    let referrer;
-    if (referredBy) {
-      referrer = await User.findOne({ referralCode: referredBy });
-
-      if (!referrer) {
-        return NextResponse.json(
-          { success: false, message: "Invalid referral code" },
-          { status: 400 }
-        );
-      }
-
-      if (referrer.referralCount >= 3) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: "Referral limit reached. Cannot refer more than 3 users.",
-          },
-          { status: 400 }
-        );
-      }
-    }
 
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
-      referralCode,
-      referredBy: referrer ? referrer._id : null,
-      invested: 1500,
-      status: "pending",
-    });
+      role: "user",
+        });
 
     await newUser.save();
 
-    if (referrer) {
-      referrer.downline.push(newUser._id);
-      referrer.referralCount += 1;
-      await referrer.save();
-
-      // Assign uplines to the new user
-      await assignUplines(newUser._id, referrer._id);
-    }
 
     await sendRegisterSuccessEmail(email, name);
 
@@ -96,8 +61,6 @@ export async function POST(req: NextRequest) {
           name: newUser.name,
           email: newUser.email,
           role: newUser.role,
-          status: newUser.status,
-          referredBy: newUser.referredBy,
         },
         token,
       },

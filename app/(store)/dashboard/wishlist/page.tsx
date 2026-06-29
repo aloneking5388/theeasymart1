@@ -3,7 +3,6 @@
 import Rating from "@/components/StoreComponents/Retings";
 import { cartMessageClear, deleteWishlistItem, getWishlistItems } from "@/store/cart/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { formatPrice } from "@/utils/formatPrice";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -74,7 +73,7 @@ const WishlistPage = () => {
           <div className="py-3 text-slate-600 px-2">
             <h2>{p.name}</h2>
             <div className="flex justify-start items-center gap-3">
-              <span className="text-lg  font-bold">₹ {formatPrice(p.price)}k</span>
+              <span className="text-lg  font-bold">₹ {p.price}k</span>
               <div className="flex">
                 <Rating size="small" type="precise" rating={p.rating} />
               </div>

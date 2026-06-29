@@ -1,13 +1,11 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { deductWalletAmount, getWalletOverview, walletMessageClear } from "@/store/wallet/walletSlice";
-import { formatPrice } from "@/utils/formatPrice";
+import { deductWalletAmount, getWalletOverview } from "@/store/wallet/walletSlice";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 
 const paymentMethods = [
   { id: "wallet", name: "MyWallet", icon: "/images/payment/wallet.png" },
@@ -120,11 +118,11 @@ const PaymentPage = () => {
           {/* Left: Payment Options */}
           <div className="w-7/12 max-md:my-2 max-md:w-full pr-2 max-md:pr-0">
             <div className="bg-white p-4 mb-4 rounded-md shadow text-slate-600">
-              <p><strong>Wallet Balance:</strong> ₹ {formatPrice(walletBalance)}</p>
-              <p>Used from Wallet: ₹ {formatPrice(walletUsed)}</p>
+              <p><strong>Wallet Balance:</strong> ₹ {walletBalance}</p>
+              <p>Used from Wallet: ₹ {walletUsed}</p>
               {payByGateway > 0 ? (
                 <p>
-                  Remaining ₹ {formatPrice(payByGateway)} will be paid using{" "}
+                  Remaining ₹ {payByGateway} will be paid using{" "}
                   {paymentMethod !== "wallet" ? paymentMethod : "another method"}
                 </p>
               ) : (
@@ -158,12 +156,12 @@ const PaymentPage = () => {
               <h2>Order Summary</h2>
               <div className="flex justify-between items-center">
                 <span>{items} items and shipping fee included</span>
-                <span>₹ {formatPrice(totalPrice)}</span>
+                <span>₹ {totalPrice}</span>
               </div>
               <div className="flex justify-between items-center font-semibold">
                 <span>Total Amount</span>
                 <span className="text-lg text-orange-500">
-                  ₹ {formatPrice(totalPrice)}
+                  ₹ {totalPrice}
                 </span>
               </div>
             </div>

@@ -4,7 +4,6 @@ import { useState } from "react";
 import Reviews from "./Reviews";
 import Link from "next/link";
 import Image from "next/image";
-import { formatPrice } from "@/utils/formatPrice";
 import Rating from "./Retings";
 import { useAppSelector } from "@/store/hooks";
 import FromShopSkeleton from "../Skeletons/FromShopSkeleton";
@@ -92,7 +91,7 @@ const FromShop = () => {
                     <div className="flex gap-2">
                       <h2 className="text-slate-600">Price: </h2>
                       <span className="text-sm font-semibold">
-                        ₹ {formatPrice(p.price)}
+                        ₹ {p.price}
                       </span>
                     </div>
                     <div className="flex gap-2">

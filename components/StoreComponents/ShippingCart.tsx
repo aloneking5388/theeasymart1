@@ -13,7 +13,6 @@ import {
   place_order,
   setOrderDetails,
 } from "@/store/Order/orderSlice";
-import { formatPrice } from "@/utils/formatPrice";
 
 const ShippingCart = () => {
   const router = useRouter();
@@ -185,21 +184,20 @@ const ShippingCart = () => {
                       <div className="flex justify-center flex-col max-md:w-5/12 w-full sm:mt-3">
                         <div className="flex max-md:flex-row gap-3 pl-4 max-sm:pl-0">
                           <p className="line-through">
-                            ₹ {formatPrice(product.productInfo.price)}k
+                            ₹ {product.productInfo.price}k
                           </p>
                           <p>-{product.productInfo.discount}%</p>
                         </div>
                         <div>
                           <h2 className="text-lg font-bold text-orange-500">
                             ₹
-                            {formatPrice(
-                              product.productInfo.price -
+                            {product.productInfo.price -
                                 Math.floor(
                                   (product.productInfo.price *
                                     product.productInfo.discount) /
                                     100
                                 )
-                            )}
+                            }
                           </h2>
                         </div>
                       </div>
@@ -221,19 +219,19 @@ const ShippingCart = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Items Total</span>
-                  <span>₹ {formatPrice(price)}</span>
+                  <span>₹ {price}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Delivery Fee</span>
-                  <span>₹ {formatPrice(calculatedShippingFee)}</span>
+                  <span>₹ {calculatedShippingFee}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>18% Tax</span>
-                  <span>₹ {formatPrice(tax)}</span>
+                  <span>₹ {tax}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Total Payment</span>
-                  <span>₹ {formatPrice(total + calculatedShippingFee)}</span>
+                  <span>₹ {total + calculatedShippingFee}</span>
                 </div>
 
                 <button

@@ -10,7 +10,6 @@ import {
 } from "@/store/cart/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { CartGroup, CartProduct } from "@/types/cart";
-import { formatPrice } from "@/utils/formatPrice";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -122,21 +121,20 @@ const Cart = () => {
                       <div className="flex justify-between max-md:flex-col  max-md:w-5/12 w-full sm:mt-3">
                         <div className="flex max-md:flex-row gap-3 pl-4 max-sm:pl-0">
                           <p className="line-through">
-                            ₹ {formatPrice(product.productInfo.price)}
+                            ₹ {product.productInfo.price}
                           </p>
                           <p>-{product.productInfo.discount}%</p>
                         </div>
                         <div className="">
                           <h2 className="text-lg font-bold text-orange-500">
                             ₹
-                            {formatPrice(
-                              product.productInfo.price -
+                            {product.productInfo.price -
                               Math.floor(
                                 (product.productInfo.price *
                                   product.productInfo.discount) /
                                   100
                               )
-                            )}
+                            }
                           </h2>
                         </div>
                         <div className="flex gap-2 flex-col ">
@@ -211,21 +209,20 @@ const Cart = () => {
                           <div className="flex max-md:flex-row gap-3 pl-4 max-sm:pl-0">
                          
                             <p className="line-through">
-                              ₹ {formatPrice(p.products[0].price)}
+                              ₹ {p.products[0].price}
                             </p>
                             <p>-{p.products[0].discount}%</p>
                           </div>
                           <div className="">
                              <h2 className="text-lg font-bold text-orange-500">
                               ₹
-                              {formatPrice(
-                                p.products[0].price -
+                              {p.products[0].price -
                                 Math.floor(
                                   (p.products[0].price *
                                     p.products[0].discount) /
                                     100
                                 )
-                              )}{" "}
+                              }{" "}
                             </h2>
                           </div>
                           <div className="flex gap-2 flex-col">
@@ -252,11 +249,11 @@ const Cart = () => {
                 <h2 className="text-xl font-bold">Order Summary</h2>
                 <div className="flex justify-between items-center">
                   <span>{buyProductItem} Item</span>
-                  <span>₹{formatPrice(price)}</span>
+                  <span>₹{price}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>18% Tax</span>
-                  <span>₹{formatPrice(tax)}</span>
+                  <span>₹{tax}</span>
                 </div>
                 <div className="flex gap-2">
                   <input
@@ -271,7 +268,7 @@ const Cart = () => {
                 <div className="flex justify-between items-center">
                   <span>Total</span>
                   <span className="text-lg text-orange-500">
-                    ₹ {formatPrice(totalWithTax)}
+                    ₹ {totalWithTax}
                   </span>
                 </div>
                 <button

@@ -17,7 +17,6 @@ import Pagination from "@/components/DashboardComponents/Pagination";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { formatPrice } from "@/utils/formatPrice";
 
 type Props = {
   products: any[];
@@ -99,7 +98,7 @@ const ProductTable = ({
                 <TableCell>{d.name?.slice(0, 16)}...</TableCell>
                 <TableCell>{d.category}</TableCell>
                 <TableCell>{d.brand}</TableCell>
-                <TableCell>₹ {formatPrice(d.price)}</TableCell>
+                <TableCell>₹ {d.price}</TableCell>
                 <TableCell>{d.discount === 0 ? "No Discount" : `${d.discount}%`}</TableCell>
                 <TableCell>{d.stock}</TableCell>
                 <TableCell>

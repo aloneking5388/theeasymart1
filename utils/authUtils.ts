@@ -8,7 +8,6 @@ export const returnUserInfo = (
   id: string;
   role: string;
   name: string;
-  status?: string;
   email: string;
   profileImage?: string;
 } | null => {
@@ -34,7 +33,6 @@ export const returnUserInfo = (
       role: decoded.role || "",
       name: decoded.name || "",
       email: decoded.email || "",
-      status: decoded.status,
       profileImage: decoded.profileImage || "",
     };
   } catch (error) {

@@ -2,7 +2,6 @@
 
 import { admin_order_status_update, home_order, homeDashboardMessageClear } from "@/store/Dashboard/homeDashboardSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { formatPrice } from "@/utils/formatPrice";
 import Image from "next/image";
 import { useParams, useRouter,  } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -90,7 +89,7 @@ const OrderDetail = () => {
                 <div className="flex justify-start items-center gap-3">
                   <h2>Payment Status : <span className="text-base">{order?.payment_status}</span></h2>
                 </div>
-                <p className="text-lg">Price : <span className="text-sm"> ₹ {formatPrice(order?.price)}</span></p>
+                <p className="text-lg">Price : <span className="text-sm"> ₹ {order?.price}</span></p>
                 <div className="mt-4 flex flex-col gap-8">
                   <div className="text-[#d0d2d6]">
                     { order?.products && order?.products.map((p: any, i: number) => (

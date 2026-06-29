@@ -4,7 +4,6 @@ import {
   setOrderDetails,
 } from "@/store/Order/orderSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { formatPrice } from "@/utils/formatPrice";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -85,7 +84,7 @@ const OrdersPage = () => {
                     scope="row"
                     className="px-6 py-3 whitespace-nowrap text-[13px] max-md:px-2 max-md:text-[10px]"
                   >
-                  ₹ {formatPrice(ord.price)}
+                  ₹ {ord.price}
                   </td>
                   <td
                     scope="row"

@@ -1,5 +1,5 @@
 "use client";
-import { formatPrice } from "@/utils/formatPrice";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -66,7 +66,7 @@ const RelatedProduct = () => {
                           </h2>
                           <div className="flex flex-col justify-start items-start gap-3">
                             <h2 className="text-[#6699ff]  text-lg font-bold">
-                              ₹ {formatPrice(p.price)}
+                              ₹ {p.price}
                             </h2>
                             <div className="flex">
                               <Rating

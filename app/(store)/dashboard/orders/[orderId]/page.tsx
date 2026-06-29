@@ -1,7 +1,6 @@
 "use client";
 import { get_order } from "@/store/Order/orderSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { formatPrice } from "@/utils/formatPrice";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
@@ -40,7 +39,7 @@ const OrderDetailsPage = () => {
           </p>
         </div>
         <div className="text-slate-600 flex flex-col gap-2">
-          <h2 className="text-lg font-bold">Total Price: ₹ {formatPrice(myOrder?.price)} 
+          <h2 className="text-lg font-bold">Total Price: ₹ {myOrder?.price} 
             <span className="text-xs ml-2 text-slate-500 font-normal">
               include Tax and Shipping Fee
             </span>
@@ -93,10 +92,10 @@ const OrderDetailsPage = () => {
                   </div>
                 </div>
                 <div className="flex flex-col pl-4">
-                  <p>Price: {formatPrice(p.price)}</p>
+                  <p>Price: {p.price}</p>
                   <p>Discount:  -{p.discount}%</p>
                    <h2 className="text-md font-extrabold text-orange-500">
-                    ₹ {formatPrice(p.price - Math.floor((p.price * p.discount) / 100))}
+                    ₹ {p.price - Math.floor((p.price * p.discount) / 100)}
                   </h2>
                 </div>
               </div>

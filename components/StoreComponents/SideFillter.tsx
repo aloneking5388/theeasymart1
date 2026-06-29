@@ -10,7 +10,6 @@ import { FaThList } from "react-icons/fa";
 import Pagination from "../DashboardComponents/Pagination";
 import { price_range_product, query_products } from "@/store/products/productSlice";
 import DynamicProductList from "./DynamicProductList";
-import { formatPrice } from "@/utils/formatPrice";
 
 
 const SideFillter = () => {
@@ -177,8 +176,8 @@ const SideFillter = () => {
                 )}
                 <div>
                   <span className="text-red-500 font-bold text-lg">
-                    ₹ {formatPrice(Math.floor(state.values[0]))} - ₹
-                    {formatPrice(Math.floor(state.values[1]))}
+                    ₹ {Math.floor(state.values[0])} - ₹
+                    {Math.floor(state.values[1])}
                   </span>
                 </div>
               </div>

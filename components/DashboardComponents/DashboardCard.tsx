@@ -1,7 +1,6 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppSelector } from "@/store/hooks";
-import { formatPrice } from "@/utils/formatPrice";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { RiProductHuntLine } from "react-icons/ri";
@@ -15,7 +14,7 @@ const DashboardCard = () => {
       return [
         {
           title: "Total Revenue",
-          value: formatPrice(totalRevenue) || 0,
+          value: totalRevenue || 0,
           icon: <BsCurrencyDollar className="text-green-500 text-xl" />,
         },
         {
@@ -38,7 +37,7 @@ const DashboardCard = () => {
       return [
         {
           title: "Total Sales",
-          value: formatPrice(totalRevenue) || 0,
+          value: totalRevenue || 0,
           icon: <BsCurrencyDollar className="text-green-500 text-xl" />,
         },
         {

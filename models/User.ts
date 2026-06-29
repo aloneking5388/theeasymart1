@@ -6,12 +6,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   phoneNumber: string;
-  referralCode: string;
-  referredBy?: Types.ObjectId | null;
   profileImage?: string;
-  downline: Types.ObjectId[];
-  uplines: Types.ObjectId[];
-  bonusesGiven: Types.ObjectId[];
   shippingInfo: {
     address?: string;
     post: string;
@@ -19,12 +14,7 @@ export interface IUser extends Document {
     city?: string;
     area?: string;
   };
-  level: number;
-  referralCount: number;
-  earnings: number;
-  invested: number;
   role: "user" | "seller" | "admin";
-  status: "pending" | "active" | "suspended";
   createdAt: Date;
 }
 
@@ -70,62 +60,13 @@ const UserSchema: Schema<IUser> = new Schema({
       type: String,
     },
   },
-  referralCode: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  referredBy: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  },
-  downline: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
-  uplines: [
-    { 
-      type: Schema.Types.ObjectId, 
-      ref: "User" 
-    }
-  ],
-  bonusesGiven: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      default: [],
-    },
-  ],
   profileImage: {
     type: String,
-  },
-  level: {
-    type: Number,
-    default: 0,
-  },
-  referralCount: {
-    type: Number,
-    default: 0,
-  },
-  earnings: {
-    type: Number,
-    default: 0,
-  },
-  invested: {
-    type: Number,
-    default: 0,
   },
   role: {
     type: String,
     enum: ["user", "seller", "admin"],
     default: "user",
-  },
-  status: {
-    type: String,
-    enum: ["pending", "active", "suspended"],
-    default: "pending",
   },
   createdAt: { type: Date, default: Date.now },
 },

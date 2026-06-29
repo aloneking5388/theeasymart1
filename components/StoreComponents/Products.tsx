@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRef } from "react";
 import Autoplay from "embla-carousel-autoplay";
-import { formatPrice } from "@/utils/formatPrice";
 import SkeletonProductCarouselItem from "../Skeletons/SkeletonProductCarouselItem";
 
 interface ProductsProps {
@@ -56,7 +55,7 @@ const Products = ({ title, products, loader }: ProductsProps) => {
                   <h2 className="text-[14px] font-semibold text-start">
                     {pl.name.slice(0, 40)}...
                   </h2>
-                  <span className="text-xl font-bold">₹ {formatPrice(pl.price)}</span>
+                  <span className="text-xl font-bold">₹ {pl.price}</span>
                 </div>
               </Link>
             </CarouselItem>

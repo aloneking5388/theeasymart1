@@ -82,10 +82,6 @@ export function proxy(req: NextRequest) {
     if (role !== "user") {
       return NextResponse.redirect(new URL("/", req.url));
     }
-
-    if (status !== "active") {
-      return NextResponse.redirect(new URL("/pending-account", req.url));
-    }
   }
 
   return NextResponse.next();

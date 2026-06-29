@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Card, CardContent } from "../ui/card";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { home_orders } from "@/store/Dashboard/homeDashboardSlice";
-import { formatPrice } from "@/utils/formatPrice";
 // Adjust path if needed
 
 const Orderlist = () => {
@@ -64,7 +63,7 @@ const Orderlist = () => {
                       #{order._id.slice(-6)}
                     </td>
                     <td className="py-2 px-3 font-medium whitespace-nowrap">
-                      ₹ {formatPrice(order.price)}
+                      ₹ {order.price}
                     </td>
                     <td className="py-2 px-3 font-medium whitespace-nowrap">
                       {order.payment_status || "N/A"}

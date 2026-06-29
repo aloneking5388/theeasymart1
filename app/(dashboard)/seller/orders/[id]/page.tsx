@@ -1,11 +1,9 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { formatPrice } from "@/utils/formatPrice";
+import { useAppSelector } from "@/store/hooks";
 import { useEffect, useState } from "react";
 
 const page = () => {
-  const dispatch = useAppDispatch();
   const [status, setStatus] = useState("");
   const { order } = useAppSelector((state) => state.homeDashboard);
 
@@ -54,7 +52,7 @@ const page = () => {
                     <span className="text-base">{order?.payment_status}</span>
                   </h2>
                 </div>
-                <span>Price : ₹ {formatPrice(order?.price)}</span>
+                <span>Price : ₹ {order?.price}</span>
                 <div className="mt-4 flex flex-col gap-4">
                   <div className="text-[#d0d2d6] flex flex-col gap-6">
                     {order?.products?.map((p, i) => (

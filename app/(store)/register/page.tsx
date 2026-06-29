@@ -28,7 +28,7 @@ const RegisterPage = () => {
   const [state, setState] = useState({
     name: "",
     email: "",
-    referralCode: "",
+    // referralCode: "",
     password: "",
   });
 
@@ -54,7 +54,6 @@ const RegisterPage = () => {
       setState({
         name: "",
         email: "",
-        referralCode: "",
         password: "",
       });
       router.push("/dashboard");
@@ -64,7 +63,6 @@ const RegisterPage = () => {
       setState({
         name: "",
         email: "",
-        referralCode: "",
         password: "",
       });
     }
@@ -108,18 +106,6 @@ const RegisterPage = () => {
                       id="email"
                       name="email"
                       placeholder="email"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1 mb-2">
-                    <Label htmlFor="email">ReferralCode</Label>
-                    <Input
-                      onChange={inputHandle}
-                      value={state.referralCode}
-                      type="text"
-                      className="w-full px-3 py-2 border border-slate-200 outline-none focus:border-indigo-500 rounded-md"
-                      id="referralCode"
-                      name="referralCode"
-                      placeholder="referralCode"
                     />
                   </div>
                   <div className="flex flex-col gap-1 mb-4 relative">

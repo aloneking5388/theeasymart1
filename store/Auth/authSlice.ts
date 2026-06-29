@@ -82,7 +82,7 @@ export const seller_login = createAsyncThunk<
 
 export const customer_register = createAsyncThunk<
   LoginResponse,
-  { name: string; email: string; referralCode: string; password: string },
+  { name: string; email: string; password: string },
   { rejectValue: ErrorResponse }
 >(
   "auth/customer_register",
@@ -92,7 +92,6 @@ export const customer_register = createAsyncThunk<
         name: info.name,
         email: info.email,
         password: info.password,
-        referredBy: info.referralCode,
       };
 
       const { data } = await axios.post<LoginResponse>(

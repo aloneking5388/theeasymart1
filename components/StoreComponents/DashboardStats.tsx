@@ -12,7 +12,6 @@ import {
   AiOutlineGift,
 } from "react-icons/ai";
 import { setOrderDetails } from "@/store/Order/orderSlice";
-import { formatPrice } from "@/utils/formatPrice";
 import { Order } from "@/types/order";
 import UniversalShareButtons from "./UniversalShareButtons";
 
@@ -60,7 +59,7 @@ const DashboardStats = () => {
         <StatCard
           icon={<AiOutlineWallet />}
           color="blue"
-          value={`₹ ${formatPrice(walletBalance || 0)}`}
+          value= "₹"
           label="Wallet Balance"
         />
         <StatCard
@@ -103,7 +102,7 @@ const DashboardStats = () => {
                   <tr key={order._id} className="bg-white border-b">
                     <td className={cellClass}>{order._id}</td>
                     <td className={cellClass}>
-                      ₹ {formatPrice(order.price)}
+                      ₹ {order.price}
                     </td>
                     <td className={cellClass}>{order.payment_status}</td>
                     <td className={cellClass}>{order.delivery_status}</td>
