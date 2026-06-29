@@ -77,6 +77,13 @@ export async function POST(req: NextRequest) {
 
     return data;
   } catch (error: any) {
+    if (error?.code === 11000 || error?.code === 11001) {
+      return NextResponse.json(
+        { success: false, message: "User already registered" },
+        { status: 409 }
+      );
+    }
+
     console.error("Registration error:", error.message);
     return NextResponse.json(
       { success: false, message: "Server error" },

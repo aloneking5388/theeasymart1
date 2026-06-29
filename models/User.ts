@@ -6,6 +6,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   phoneNumber: string;
+  referralCode?: string;
   profileImage?: string;
   shippingInfo: {
     address?: string;
@@ -36,6 +37,11 @@ const UserSchema: Schema<IUser> = new Schema({
     type: String,
     unique: true,
     sparse: true, // Allows for unique phone numbers but can be null
+  },
+  referralCode: {
+    type: String,
+    unique: true,
+    sparse: true,
   },
   shippingInfo: {
     name: {

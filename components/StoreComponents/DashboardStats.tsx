@@ -22,6 +22,7 @@ const DashboardStats = () => {
   const { user, walletBalance, totalOrders, recentOrders } = useAppSelector(
     (state) => state.dashboard
   );
+  const safeRecentOrders = Array.isArray(recentOrders) ? recentOrders : [];
 
   useEffect(() => {
     if (userInfo?.id) {
@@ -59,7 +60,7 @@ const DashboardStats = () => {
         <StatCard
           icon={<AiOutlineWallet />}
           color="blue"
-          value= "₹"
+          value={`₹ ${walletBalance ?? 0}`}
           label="Wallet Balance"
         />
         <StatCard
@@ -98,8 +99,15 @@ const DashboardStats = () => {
                 </tr>
               </thead>
               <tbody>
-                {recentOrders.map((order: Order) => (
-                  <tr key={order._id} className="bg-white border-b">
+                {safeRecentOrders.length === 0 ? (
+                  <tr className="bg-white border-b">
+                    <td colSpan={5} className={`${cellClass} text-center py-6`}>
+                      No recent orders yet.
+                    </td>
+                  </tr>
+                ) : (
+                  safeRecentOrders.map((order: Order) => (
+                    <tr key={order._id} className="bg-white border-b">
                     <td className={cellClass}>{order._id}</td>
                     <td className={cellClass}>
                       ₹ {order.price}
@@ -122,7 +130,8 @@ const DashboardStats = () => {
                       )}
                     </td>
                   </tr>
-                ))}
+                  ))
+                )}
               </tbody>
             </table>
           </div>

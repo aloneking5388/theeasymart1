@@ -17,22 +17,22 @@ export async function GET(req: NextRequest) {
   const customerId = new mongoose.Types.ObjectId(userId);
 
   try {
-    const [
-      user,
-      recentOrders,
-      totalOrders,
-    ] = await Promise.all([
+    const [user, wallet, recentOrders, totalOrders] = await Promise.all([
       User.findById(customerId).select("-password"),
       CustomerWallet.findOne({ customerId }).select("amount"),
       CustomerOrder.find({ customerId }).sort({ createdAt: -1 }).limit(5),
       CustomerOrder.countDocuments({ customerId }),
     ]);
 
-    return NextResponse.json({
-      user,
-      recentOrders,
-      totalOrders,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        user,
+        walletBalance: wallet?.amount ?? 0,
+        recentOrders: recentOrders ?? [],
+        totalOrders,
+      },
+      { status: 200 }
+    );
 
   } catch (error) {
     console.error("Dashboard API Error:", error);
