@@ -33,12 +33,12 @@ const ShippingCart = () => {
 
   const { userInfo } = useAppSelector((state) => state.auth);
   const { items, total, price, tax, products } = useAppSelector(
-    (state) => state.cart.shippingDetails
+    (state) => state.cart.shippingDetails,
   );
   const { loader } = useAppSelector((state) => state.order);
 
   const isFormComplete = Object.values(shippingInfo).every(
-    (value) => value.trim() !== ""
+    (value) => value.trim() !== "",
   );
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const ShippingCart = () => {
 
   const handleShippingMethodChange = (
     sellerId: string,
-    method: "pickup" | "home delivery"
+    method: "pickup" | "home delivery",
   ) => {
     setShippingMethodMap((prev) => ({
       ...prev,
@@ -59,20 +59,22 @@ const ShippingCart = () => {
     }));
   };
 
-  const calculatedShippingFee = products.reduce((total: number, group: CartGroup) => {
-  const method = shippingMethodMap[group.sellerId] || "home delivery";
-  const groupPrice = group.products.reduce(
-    (sum: number, product: CartProduct) => sum + product.productInfo.price,
-    0
+  const calculatedShippingFee = products.reduce(
+    (total: number, group: CartGroup) => {
+      const method = shippingMethodMap[group.sellerId] || "home delivery";
+      const groupPrice = group.products.reduce(
+        (sum: number, product: CartProduct) => sum + product.productInfo.price,
+        0,
+      );
+
+      if (method === "home delivery" && groupPrice < 5000) {
+        return total + 100;
+      }
+
+      return total;
+    },
+    0,
   );
-
-  if (method === "home delivery" && groupPrice < 5000) {
-    return total + 100;
-  }
-
-  return total;
-}, 0);
-
 
   const handlePlaceOrder = () => {
     if (!userInfo?.id) {
@@ -89,7 +91,7 @@ const ShippingCart = () => {
         userId: userInfo.id,
         items,
         shippingMethodMap,
-      })
+      }),
     )
       .unwrap()
       .then((res) => {
@@ -98,7 +100,7 @@ const ShippingCart = () => {
             orderId: res.orderId,
             totalPrice: total + calculatedShippingFee,
             items,
-          })
+          }),
         );
         toast.success(res.message);
         dispatch(orderMessageClear());
@@ -106,14 +108,14 @@ const ShippingCart = () => {
       })
       .catch((error) =>
         toast.error(
-          error?.message || "An error occurred while placing the order"
-        )
+          error?.message || "An error occurred while placing the order",
+        ),
       );
   };
 
   return (
     <section className="bg-[#eeeeee]">
-      <div className="max-w-[1440px] mx-auto lg:px-12 px-10 py-16">
+      <div className="max-w-360 mx-auto lg:px-12 px-10 py-16">
         <div className="w-full flex flex-wrap">
           <div className="w-[67%] max-md:w-full">
             <div className="flex flex-col gap-3">
@@ -143,7 +145,7 @@ const ShippingCart = () => {
                         onClick={() =>
                           handleShippingMethodChange(
                             group.sellerId,
-                            "home delivery"
+                            "home delivery",
                           )
                         }
                         className={`px-3 py-1 rounded ${
@@ -163,9 +165,9 @@ const ShippingCart = () => {
                       className="w-full flex flex-wrap"
                     >
                       <div className="flex max-md:flex-col w-full gap-2 max-md:w-7/12">
-                        <div className="flex max-md:flex-col gap-2 justify-start items-center">
+                        <div className="flex maxh-20-col gap-2 justify-start items-center">
                           <Image
-                            className="w-[80px] h-[80px] object-cover"
+                            className="w-20 h-20 object-cover"
                             src={product.productInfo.images[0]}
                             alt="product image"
                             width={80}
@@ -192,12 +194,11 @@ const ShippingCart = () => {
                           <h2 className="text-lg font-bold text-orange-500">
                             ₹
                             {product.productInfo.price -
-                                Math.floor(
-                                  (product.productInfo.price *
-                                    product.productInfo.discount) /
-                                    100
-                                )
-                            }
+                              Math.floor(
+                                (product.productInfo.price *
+                                  product.productInfo.discount) /
+                                  100,
+                              )}
                           </h2>
                         </div>
                       </div>
@@ -237,7 +238,7 @@ const ShippingCart = () => {
                 <button
                   disabled={!isFormComplete || loader}
                   onClick={handlePlaceOrder}
-                  className={`px-5 py-[6px] rounded-sm hover:shadow-orange-500/20 hover:shadow-lg ${
+                  className={`px-5 py-1.5 rounded-sm hover:shadow-orange-500/20 hover:shadow-lg ${
                     isFormComplete ? "bg-orange-500" : "bg-orange-300"
                   } text-sm text-white uppercase`}
                 >

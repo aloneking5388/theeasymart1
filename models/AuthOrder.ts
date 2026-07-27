@@ -17,6 +17,9 @@ export interface IAuthorOrder extends Document {
   price: number;
   shippingMethod: string;
   payment_status: string;
+  payment_method?: string | null;
+  payment_reference?: string | null;
+  wallet_amount?: number;
   shippingInfo: string;
   delivery_status: string;
   date: string; // or Date if you want
@@ -75,6 +78,18 @@ const authorSchema = new Schema<IAuthorOrder>(
     payment_status: {
       type: String,
       required: true,
+    },
+    payment_method: {
+      type: String,
+      default: null,
+    },
+    payment_reference: {
+      type: String,
+      default: null,
+    },
+    wallet_amount: {
+      type: Number,
+      default: 0,
     },
     shippingMethod: {
       type: String,

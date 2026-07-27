@@ -18,6 +18,9 @@ export interface Order {
   items: number;
   products: OrderItem[];
   payment_status: string;
+  payment_method?: string | null;
+  payment_reference?: string | null;
+  wallet_amount?: number;
   delivery_status: string;
   date: string;
   createdAt: string;

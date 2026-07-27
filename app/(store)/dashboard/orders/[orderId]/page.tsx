@@ -57,6 +57,17 @@ const OrderDetailsPage = () => {
             </span>
           </p>
           <p>
+            Payment gateway:{" "}
+            <span className="py-[2px] text-xs px-3 bg-slate-100 text-slate-700 rounded-md">
+              {myOrder?.payment_method || "wallet/pending"}
+            </span>
+          </p>
+          {myOrder?.payment_reference ? (
+            <p className="text-sm text-slate-500 break-all">
+              Reference: {myOrder.payment_reference}
+            </p>
+          ) : null}
+          <p>
             Order status:{" "}
             <span
               className={`py-[2px] text-xs px-3 ${

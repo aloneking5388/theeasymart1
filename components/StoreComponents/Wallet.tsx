@@ -84,14 +84,17 @@ const Wallet = () => {
           <div
             className={`${
               bgColor?.split(" ")[0]
-            } w-[47px] max-md:w-[30px] max-md:h-[30px] h-[47px] rounded-full flex justify-center max-md:text-lg items-center text-xl`}
+            } w-11.75 max-md:w-7.5 max-md:h-7.5 h-11.75 rounded-full flex justify-center max-md:text-lg items-center text-xl`}
           >
             <span className={`${bgColor?.split(" ")[1]}`}>
               <FaWallet />
             </span>
           </div>
           <div className="flex flex-col text-slate-600">
-            <h2 className="text-3xl max-md:text-xl font-bold"> <span className="max-md:text-lg text-xl">₹</span> {value}</h2>
+            <h2 className="text-3xl max-md:text-xl font-bold">
+              {" "}
+              <span className="max-md:text-lg text-xl">₹</span> {value}
+            </h2>
             <span className="max-md:text-sm">{label}</span>
           </div>
         </div>
@@ -202,7 +205,7 @@ const Wallet = () => {
                     </td>
                     <td className="px-6 max-md:px-2 max-md:text-[8px] py-3">
                       <Link href={`/dashboard/wallet/${t._id}`}>
-                        <span className="bg-green-100 text-green-800 text-sm max-md:text-[8px] font-normal mr-2 px-2.5 max-md:px-1 py-[1px] rounded">
+                        <span className="bg-green-100 text-green-800 text-sm max-md:text-[8px] font-normal mr-2 px-2.5 max-md:px-1 py-px rounded">
                           View
                         </span>
                       </Link>

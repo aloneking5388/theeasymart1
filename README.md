@@ -27,6 +27,34 @@ To learn more about Next.js, take a look at the following resources:
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
+## Payment Gateway Setup
+
+Add these environment variables before using the checkout page:
+
+```bash
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+PAYPAL_CLIENT_ID=
+PAYPAL_CLIENT_SECRET=
+PAYPAL_BASE_URL=https://api-m.sandbox.paypal.com
+PAYPAL_WEBHOOK_ID=
+RAZORPAY_KEY_ID=
+RAZORPAY_KEY_SECRET=
+RAZORPAY_WEBHOOK_SECRET=
+NEXT_PUBLIC_RAZORPAY_KEY_ID=
+```
+
+Google Pay is exposed through the Razorpay UPI checkout flow, which is the practical web integration path for Indian payments.
+
+Webhook endpoints to register in your payment dashboards:
+
+```bash
+Stripe:   https://your-domain.com/api/payments/webhooks/stripe
+Razorpay: https://your-domain.com/api/payments/webhooks/razorpay
+PayPal:   https://your-domain.com/api/payments/webhooks/paypal
+```
+
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel

@@ -64,6 +64,9 @@ const OrdersPage = () => {
                   Payment status
                 </th>
                 <th scope="col" className="px-6 py-3 whitespace-nowrap text-[13px] max-md:px-2 max-md:text-[10px]">
+                  Gateway
+                </th>
+                <th scope="col" className="px-6 py-3 whitespace-nowrap text-[13px] max-md:px-2 max-md:text-[10px]">
                   Order status
                 </th>
                 <th scope="col" className="px-6 py-3 whitespace-nowrap text-[13px] max-md:px-2 max-md:text-[10px]">
@@ -91,6 +94,12 @@ const OrdersPage = () => {
                     className="px-6 py-3 whitespace-nowrap text-[13px] max-md:px-2 max-md:text-[10px]"
                   >
                     {ord.payment_status}
+                  </td>
+                  <td
+                    scope="row"
+                    className="px-6 py-3 whitespace-nowrap text-[13px] max-md:px-2 max-md:text-[10px]"
+                  >
+                    {ord.payment_method || "wallet/pending"}
                   </td>
                   <td
                     scope="row"

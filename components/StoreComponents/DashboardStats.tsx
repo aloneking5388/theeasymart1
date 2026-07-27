@@ -20,7 +20,7 @@ const DashboardStats = () => {
   const dispatch = useAppDispatch();
   const { userInfo } = useAppSelector((state) => state.auth);
   const { user, walletBalance, totalOrders, recentOrders } = useAppSelector(
-    (state) => state.dashboard
+    (state) => state.dashboard,
   );
   const safeRecentOrders = Array.isArray(recentOrders) ? recentOrders : [];
 
@@ -37,9 +37,9 @@ const DashboardStats = () => {
         totalPrice: order.price,
         items: order.products.reduce(
           (sum: number, p: any) => sum + p.quantity,
-          0
+          0,
         ),
-      })
+      }),
     );
     router.push("/payment");
   };
@@ -108,28 +108,26 @@ const DashboardStats = () => {
                 ) : (
                   safeRecentOrders.map((order: Order) => (
                     <tr key={order._id} className="bg-white border-b">
-                    <td className={cellClass}>{order._id}</td>
-                    <td className={cellClass}>
-                      ₹ {order.price}
-                    </td>
-                    <td className={cellClass}>{order.payment_status}</td>
-                    <td className={cellClass}>{order.delivery_status}</td>
-                    <td className={cellClass}>
-                      <Link href={`/dashboard/orders/${order._id}`}>
-                        <span className="bg-green-100 text-green-800 text-sm max-md:text-[8px] font-normal mr-2 px-2.5 max-md:px-1 py-[1px] rounded">
-                          View
-                        </span>
-                      </Link>
-                      {order.payment_status !== "paid" && (
-                        <span
-                          onClick={() => redirect(order)}
-                          className="bg-red-100 text-red-800 text-sm max-md:text-[8px] font-normal mr-2 px-2.5 max-md:px-1 py-[1px] rounded cursor-pointer"
-                        >
-                          Pay Now
-                        </span>
-                      )}
-                    </td>
-                  </tr>
+                      <td className={cellClass}>{order._id}</td>
+                      <td className={cellClass}>₹ {order.price}</td>
+                      <td className={cellClass}>{order.payment_status}</td>
+                      <td className={cellClass}>{order.delivery_status}</td>
+                      <td className={cellClass}>
+                        <Link href={`/dashboard/orders/${order._id}`}>
+                          <span className="bg-green-100 text-green-800 text-sm max-md:text-[8px] font-normal mr-2 px-2.5 max-md:px-1 py-px rounded">
+                            View
+                          </span>
+                        </Link>
+                        {order.payment_status !== "paid" && (
+                          <span
+                            onClick={() => redirect(order)}
+                            className="bg-red-100 text-red-800 text-sm max-md:text-[8px] font-normal mr-2 px-2.5 max-md:px-1 py-px rounded cursor-pointer"
+                          >
+                            Pay Now
+                          </span>
+                        )}
+                      </td>
+                    </tr>
                   ))
                 )}
               </tbody>
@@ -185,7 +183,7 @@ const StatCard = ({
   return (
     <div className="flex justify-center items-center p-5 bg-white rounded-md gap-5">
       <div
-        className={`${bg} w-[47px] max-md:w-[30px] max-md:h-[30px] max-md:text-lg h-[47px] rounded-full flex justify-center items-center text-xl`}
+        className={`${bg} w-11.75 max-md:w-7.5 max-md:h-7.5 max-md:text-lg h-11.75 rounded-full flex justify-center items-center text-xl`}
       >
         <span className={text}>{icon}</span>
       </div>
