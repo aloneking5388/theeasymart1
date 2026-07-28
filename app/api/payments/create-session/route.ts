@@ -1,4 +1,5 @@
 import { CustomerOrder } from "@/models/CustomerOrder";
+import CustomerWallet from "@/models/CustomerWallet";
 import { connectDB } from "@/utils/ConnectDB";
 import { getTokenFromHeaders } from "@/utils/getToken";
 import { NextRequest, NextResponse } from "next/server";
@@ -76,7 +77,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const sanitizedWalletAmount = Math.max(0, Number(walletAmount) || 0);
+    const requestedWalletAmount = Math.max(0, Number(walletAmount) || 0);
+    const wallet = await CustomerWallet.findOne({ customerId: token.id });
+    const availableWalletAmount = Math.max(0, Number(wallet?.amount || 0));
+
+    // Always derive payable amount from server-side order and wallet state.
+    const sanitizedWalletAmount = Math.min(
+      requestedWalletAmount,
+      availableWalletAmount,
+      order.price
+    );
     const remainingAmount = Math.max(order.price - sanitizedWalletAmount, 0);
 
     if (remainingAmount <= 0) {
@@ -86,11 +96,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (Math.abs(remainingAmount - Number(amount)) > 1) {
-      return NextResponse.json(
-        { message: "Payment amount does not match the order balance" },
-        { status: 400 }
-      );
+    // Ignore client-side amount drift and trust only server-computed balance.
+    const clientAmount = Number(amount);
+    if (Number.isFinite(clientAmount) && Math.abs(remainingAmount - clientAmount) > 1) {
+      console.warn("Payment amount mismatch detected", {
+        orderId,
+        customerId: token.id,
+        clientAmount,
+        remainingAmount,
+      });
     }
 
     const appBaseUrl = getAppBaseUrl(req.url);

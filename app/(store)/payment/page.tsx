@@ -164,10 +164,11 @@ const PaymentPage = () => {
   const { orderId, items, totalPrice } = useAppSelector((state) => state.order);
   const { token, userInfo } = useAppSelector((state) => state.auth);
   const { walletBalance, loader } = useAppSelector((state) => state.wallet);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentGateway>("razorpay");
+  const [paymentMethod, setPaymentMethod] =
+    useState<PaymentGateway>("razorpay");
   const [processing, setProcessing] = useState(false);
   const selectedGateway = paymentMethods.find(
-    (method) => method.id === paymentMethod
+    (method) => method.id === paymentMethod,
   );
 
   const walletUsed = Math.min(walletBalance, totalPrice);
@@ -282,13 +283,13 @@ const PaymentPage = () => {
           });
 
           router.push(
-            `/orderConfirm?status=success&message=${encodeURIComponent(result.message)}`
+            `/orderConfirm?status=success&message=${encodeURIComponent(result.message)}`,
           );
         } catch (error: any) {
           router.push(
             `/orderConfirm?status=error&message=${encodeURIComponent(
-              error.message || "Payment confirmation failed"
-            )}`
+              error.message || "Payment confirmation failed",
+            )}`,
           );
         }
       },
@@ -326,7 +327,7 @@ const PaymentPage = () => {
         });
 
         router.push(
-          `/orderConfirm?status=success&message=${encodeURIComponent(result.message)}`
+          `/orderConfirm?status=success&message=${encodeURIComponent(result.message)}`,
         );
         return;
       }
@@ -346,7 +347,7 @@ const PaymentPage = () => {
   };
 
   return (
-    <section className="bg-[radial-gradient(circle_at_top,_#fff3e8,_#f4f4f5_55%,_#e5e7eb)]">
+    <section className="bg-[radial-gradient(circle_at_top,#fff3e8,#f4f4f5_55%,#e5e7eb)]">
       <div className="max-w-360 mx-auto lg:px-12 px-10 py-16 mt-4">
         <div className="flex flex-wrap max-md:flex-col-reverse">
           {/* Left: Payment Options */}
@@ -366,7 +367,9 @@ const PaymentPage = () => {
                   </p>
                 </div>
                 <div className="rounded-2xl bg-slate-50 px-5 py-4 min-w-64 border border-slate-100">
-                  <p><strong>Wallet Balance:</strong> ₹ {walletBalance}</p>
+                  <p>
+                    <strong>Wallet Balance:</strong> ₹ {walletBalance}
+                  </p>
                   <p>Used from Wallet: ₹ {walletUsed}</p>
                   <p>Remaining via gateway: ₹ {payByGateway}</p>
                 </div>
@@ -381,7 +384,9 @@ const PaymentPage = () => {
                   </p>
                 </div>
               ) : (
-                <p className="mt-5 text-green-600 font-semibold">Full payment covered by wallet.</p>
+                <p className="mt-5 text-green-600 font-semibold">
+                  Full payment covered by wallet.
+                </p>
               )}
             </div>
 
@@ -421,7 +426,9 @@ const PaymentPage = () => {
           {/* Right: Order Summary */}
           <div className="w-5/12 max-md:w-full pl-2 max-md:pl-0 md:mb-0">
             <div className="bg-white shadow rounded-3xl p-6 text-slate-600 flex flex-col gap-4 border border-slate-100">
-              <h2 className="text-xl font-semibold text-slate-800">Order Summary</h2>
+              <h2 className="text-xl font-semibold text-slate-800">
+                Order Summary
+              </h2>
               <div className="flex justify-between items-center">
                 <span>{items} items and shipping fee included</span>
                 <span>₹ {totalPrice}</span>
@@ -436,9 +443,7 @@ const PaymentPage = () => {
               </div>
               <div className="flex justify-between items-center font-semibold">
                 <span>Total Amount</span>
-                <span className="text-lg text-orange-500">
-                  ₹ {totalPrice}
-                </span>
+                <span className="text-lg text-orange-500">₹ {totalPrice}</span>
               </div>
               <div className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-500">
                 Secure checkout powered by verified providers. Google Pay is
