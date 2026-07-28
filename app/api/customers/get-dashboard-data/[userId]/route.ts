@@ -17,11 +17,20 @@ export async function GET(req: NextRequest) {
   const customerId = new mongoose.Types.ObjectId(userId);
 
   try {
-    const [user, wallet, recentOrders, totalOrders] = await Promise.all([
+    const [
+      user,
+      wallet,
+      recentOrders,
+      totalOrders,
+      pendingOrders,
+      confirmedOrders,
+    ] = await Promise.all([
       User.findById(customerId).select("-password"),
       CustomerWallet.findOne({ customerId }).select("amount"),
       CustomerOrder.find({ customerId }).sort({ createdAt: -1 }).limit(5),
       CustomerOrder.countDocuments({ customerId }),
+      CustomerOrder.countDocuments({ customerId, delivery_status: "pending" }),
+      CustomerOrder.countDocuments({ customerId, payment_status: "paid" }),
     ]);
 
     return NextResponse.json(
@@ -30,12 +39,16 @@ export async function GET(req: NextRequest) {
         walletBalance: wallet?.amount ?? 0,
         recentOrders: recentOrders ?? [],
         totalOrders,
+        pendingOrders,
+        confirmedOrders,
       },
-      { status: 200 }
+      { status: 200 },
     );
-
   } catch (error) {
     console.error("Dashboard API Error:", error);
-    return NextResponse.json({ error: "Failed to fetch customer data" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch customer data" },
+      { status: 500 },
+    );
   }
 }

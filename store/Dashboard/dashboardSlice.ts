@@ -11,6 +11,8 @@ const initialState: DashboardState = {
   successMessage: "",
   loader: false,
   totalOrders: 0,
+  pendingOrders: 0,
+  confirmedOrders: 0,
 };
 
 // ✅ Thunk for fetching dashboard data
@@ -33,7 +35,7 @@ export const get_dashboard_index_data = createAsyncThunk<
     try {
       const { data } = await axios.get<DashboardData>(
         `/customers/get-dashboard-data/${userId}`,
-        config
+        config,
       );
       return data;
     } catch (error: any) {
@@ -41,7 +43,7 @@ export const get_dashboard_index_data = createAsyncThunk<
         error.response?.data?.message || "Failed to fetch dashboard data";
       return rejectWithValue({ message });
     }
-  }
+  },
 );
 
 // ✅ Slice for dashboard
@@ -68,19 +70,17 @@ export const dashboardReducer = createSlice({
           state.walletBalance = action.payload.walletBalance;
           state.recentOrders = action.payload.recentOrders;
           state.totalOrders = action.payload.totalOrders;
-          
-        }
+          state.pendingOrders = action.payload.pendingOrders;
+          state.confirmedOrders = action.payload.confirmedOrders;
+        },
       )
       .addCase(
         get_dashboard_index_data.rejected,
-        (
-          state,
-          action: PayloadAction<{ message?: string } | undefined>
-        ) => {
+        (state, action: PayloadAction<{ message?: string } | undefined>) => {
           state.loader = false;
           state.errorMessage =
             action.payload?.message || "get dashboard data failed";
-        }
+        },
       );
   },
 });

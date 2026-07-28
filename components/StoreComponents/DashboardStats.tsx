@@ -7,21 +7,18 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   AiOutlineShoppingCart,
-  AiOutlineWallet,
-  AiOutlineUserAdd,
-  AiOutlineGift,
+  AiOutlineCheckCircle,
+  AiOutlineHistory,
 } from "react-icons/ai";
 import { setOrderDetails } from "@/store/Order/orderSlice";
 import { Order } from "@/types/order";
-import UniversalShareButtons from "./UniversalShareButtons";
 
 const DashboardStats = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { userInfo } = useAppSelector((state) => state.auth);
-  const { user, walletBalance, totalOrders, recentOrders } = useAppSelector(
-    (state) => state.dashboard,
-  );
+  const { totalOrders, pendingOrders, confirmedOrders, recentOrders } =
+    useAppSelector((state) => state.dashboard);
   const safeRecentOrders = Array.isArray(recentOrders) ? recentOrders : [];
 
   useEffect(() => {
@@ -50,36 +47,30 @@ const DashboardStats = () => {
   return (
     <>
       {/* Quick Stats */}
-      <div className="grid items-start justify-start grid-cols-2 md:grid-cols-4 gap-5">
+      <div className="grid items-start justify-start grid-cols-1 md:grid-cols-3 gap-5">
         <StatCard
           icon={<AiOutlineShoppingCart />}
           color="green"
-          value={totalOrders}
+          value={pendingOrders}
+          label="Pending Orders"
+        />
+        <StatCard
+          icon={<AiOutlineCheckCircle />}
+          color="blue"
+          value={confirmedOrders}
           label="Confirm Orders"
         />
         <StatCard
-          icon={<AiOutlineWallet />}
-          color="blue"
-          value={`₹ ${walletBalance ?? 0}`}
-          label="Wallet Balance"
-        />
-        <StatCard
-          icon={<AiOutlineGift />}
+          icon={<AiOutlineHistory />}
           color="purple"
-          value={user?.referralCode || "-"}
-          label="Referral Code"
-        />
-        <StatCard
-          icon={<AiOutlineUserAdd />}
-          color="yellow"
-          value={user?.referralCount || 0}
-          label="Referred Users"
+          value={totalOrders}
+          label="Order History"
         />
       </div>
 
       {/* Recent Orders */}
       <div className="bg-white p-4 mt-5 rounded-md">
-        <h2 className="text-lg font-semibold text-slate-600">Recent Orders</h2>
+        <h2 className="text-lg font-semibold text-slate-600">Order History</h2>
         <div className="pt-4">
           <div className="w-full overflow-x-auto">
             <table className="w-full text-sm max-md:text-[8px] text-left text-gray-500">
@@ -135,24 +126,6 @@ const DashboardStats = () => {
           </div>
         </div>
       </div>
-
-      {/* Referral Code Share */}
-      <div className="bg-purple-100 p-4 mt-6 rounded-md">
-        <p className="font-semibold text-purple-700">
-          Invite your friends and earn ₹ 500 for every referral!
-        </p>
-        <div className="flex flex-col gap-4 mt-2">
-          <input
-            readOnly
-            value={user?.referralCode || "N/A"}
-            className="bg-white border px-4 py-2 rounded w-full"
-          />
-          <UniversalShareButtons
-            message={`Join me on this amazing store and earn rewards using my referral code: ${user?.referralCode}`}
-            url={`https://www.The Easy Mart.com/signup?ref=${user?.referralCode}`}
-          />
-        </div>
-      </div>
     </>
   );
 };
@@ -175,7 +148,6 @@ const StatCard = ({
     blue: { bg: "bg-blue-100", text: "text-blue-800" },
     red: { bg: "bg-red-100", text: "text-red-800" },
     purple: { bg: "bg-purple-100", text: "text-purple-800" },
-    yellow: { bg: "bg-yellow-100", text: "text-yellow-800" },
   };
 
   const { bg, text } = colorClasses[color] || colorClasses.green;

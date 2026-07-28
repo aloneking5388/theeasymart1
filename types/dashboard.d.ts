@@ -1,9 +1,10 @@
-
 export interface DashboardData {
   user: User;
-  walletBalance: number;  
+  walletBalance: number;
   recentOrders: any[]; // Replace `any` with a specific order interface if available
   totalOrders: number;
+  pendingOrders: number;
+  confirmedOrders: number;
 }
 
 export interface User {
@@ -16,7 +17,6 @@ export interface User {
   referralCount?: number;
 }
 
-
 export interface DashboardState {
   user: User | null;
   walletBalance: number;
@@ -25,4 +25,6 @@ export interface DashboardState {
   successMessage: string;
   loader: boolean;
   totalOrders: number;
+  pendingOrders: number;
+  confirmedOrders: number;
 }
