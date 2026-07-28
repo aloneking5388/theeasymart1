@@ -34,21 +34,18 @@ export async function POST(req: NextRequest) {
   try {
     const tokenString = getTokenFromHeaders(req.headers);
     if (!tokenString) {
-      return NextResponse.json(
-        { message: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const token = jwt.verify(
       tokenString,
-      process.env.JWT_SECRET || "your_jwt_secret"
+      process.env.JWT_SECRET || "your_jwt_secret",
     ) as JwtPayload;
 
     if (token.role !== "user") {
       return NextResponse.json(
         { message: "Only customers can start payments" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -57,7 +54,7 @@ export async function POST(req: NextRequest) {
     if (!gateway || !isExternalGateway(gateway) || !orderId) {
       return NextResponse.json(
         { message: "Invalid payment request" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -73,7 +70,7 @@ export async function POST(req: NextRequest) {
     if (order.payment_status === "paid") {
       return NextResponse.json(
         { message: "This order has already been paid" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -85,20 +82,23 @@ export async function POST(req: NextRequest) {
     const sanitizedWalletAmount = Math.min(
       requestedWalletAmount,
       availableWalletAmount,
-      order.price
+      order.price,
     );
     const remainingAmount = Math.max(order.price - sanitizedWalletAmount, 0);
 
     if (remainingAmount <= 0) {
       return NextResponse.json(
         { message: "Wallet already covers the full order amount" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Ignore client-side amount drift and trust only server-computed balance.
     const clientAmount = Number(amount);
-    if (Number.isFinite(clientAmount) && Math.abs(remainingAmount - clientAmount) > 1) {
+    if (
+      Number.isFinite(clientAmount) &&
+      Math.abs(remainingAmount - clientAmount) > 1
+    ) {
       console.warn("Payment amount mismatch detected", {
         orderId,
         customerId: token.id,
@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
       }
 
       const approvalLink = data.links?.find(
-        (link: { rel: string; href: string }) => link.rel === "payer-action"
+        (link: { rel: string; href: string }) => link.rel === "payer-action",
       );
 
       if (!approvalLink?.href) {
@@ -189,7 +189,7 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json(
         { checkoutUrl: approvalLink.href },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
@@ -213,14 +213,15 @@ export async function POST(req: NextRequest) {
         currency: razorpayOrder.currency,
         razorpayOrderId: razorpayOrder.id,
         keyId:
-          process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID,
+          process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ||
+          process.env.RAZORPAY_KEY_ID,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error: any) {
     return NextResponse.json(
       { message: error.message || "Unable to start payment" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
