@@ -4,10 +4,10 @@ import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 
 const CardPage = () => {
   return (
-    <div className="max-w-[1440px] mx-auto lg:px-12 px-5 md:px-10 ">
+    <div className="max-w-360 mx-auto lg:px-12 px-5 md:px-10 ">
       <section
         style={{ backgroundImage: 'url("/images/banner/card.jpg")' }}
-        className="h-[220px] mt-6 bg-no-repeat bg-center bg-cover relative"
+        className="h-55 mt-6 bg-no-repeat bg-center bg-cover relative"
       >
         <div className="absolute left-0 top-0 w-full h-full bg-[#2422228a]">
           <div className="w-full h-full mx-auto">

@@ -108,7 +108,7 @@ const DynamicProductList = ({
               >
                 <div
                   className={`relative flex justify-center items-center p-2 ${
-                    layout === "list" ? "w-[60%] h-[180px]" : ""
+                    layout === "list" ? "w-[60%] h-45" : ""
                   }`}
                 >
                   {showDiscount && product.discount > 0 && (

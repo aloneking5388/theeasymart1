@@ -6,18 +6,18 @@ const RelatedProductSkeleton = () => {
       {Array.from({ length: 3 }).map((_, idx) => (
         <div
           key={idx}
-          className="flex lg:flex-row flex-col min-w-[230px] max-w-[350px] bg-slate-100 rounded-md shadow-md"
+          className="flex lg:flex-row flex-col min-w-57.5 max-w-87.5 bg-slate-100 rounded-md shadow-md"
         >
-          <div className="relative h-[200px] w-[200px]">
+          <div className="relative h-50 w-50">
             <Skeleton className="h-full w-full rounded object-cover" />
             <div className="absolute top-2 left-2">
               <Skeleton className="w-9 h-9 rounded-full bg-red-400 opacity-70" />
             </div>
           </div>
           <div className="p-4 flex flex-col gap-2">
-            <Skeleton className="h-5 w-[200px]" />
-            <Skeleton className="h-6 w-[100px]" />
-            <Skeleton className="h-4 w-[80px]" />
+            <Skeleton className="h-5 w-50" />
+            <Skeleton className="h-6 w-25" />
+            <Skeleton className="h-4 w-20" />
           </div>
         </div>
       ))}

@@ -80,7 +80,7 @@ const Addbanner = () => {
           <form onSubmit={add}>
             <div className="mb-6">
               <Label
-                className="flex justify-center items-center flex-col h-[180px] cursor-pointer border border-dashed hover:border-indigo-500 w-full text-[#d0d2d6]"
+                className="flex justify-center items-center flex-col h-45 cursor-pointer border border-dashed hover:border-indigo-500 w-full text-[#d0d2d6]"
                 htmlFor="image"
               >
                 <span className="text-4xl">
@@ -97,7 +97,7 @@ const Addbanner = () => {
               />
             </div>
             {imageShow && (
-              <div className="mb-4 w-full h-[300px] relative">
+              <div className="mb-4 w-full h-75 relative">
                 <Image
                   src={imageShow}
                   alt="image"
@@ -108,7 +108,7 @@ const Addbanner = () => {
             )}
             <Button
               disabled={loader ? true : false}
-              className="bg-blue-500 w-[190px] hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3"
+              className="bg-blue-500 w-47.5 hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3"
             >
               {loader ? <Loader2 className="animate-spin" /> : "Add banner"}
             </Button>
@@ -118,7 +118,7 @@ const Addbanner = () => {
       {banner && (
         <div>
           {
-            <div className="mb-4 w-full h-[300px] relative">
+            <div className="mb-4 w-full h-75 relative">
               <Image
                 src={banner.banner}
                 alt="image"
@@ -130,7 +130,7 @@ const Addbanner = () => {
           <form onSubmit={update}>
             <div className="mb-6">
               <Label
-                className="flex justify-center items-center flex-col h-[180px] cursor-pointer border border-dashed hover:border-indigo-500 w-full text-[#d0d2d6]"
+                className="flex justify-center items-center flex-col h-45 cursor-pointer border border-dashed hover:border-indigo-500 w-full text-[#d0d2d6]"
                 htmlFor="image"
               >
                 <span className="text-4xl">
@@ -147,7 +147,7 @@ const Addbanner = () => {
               />
             </div>
             {imageShow && (
-              <div className="mb-4 w-full h-[300px] relative">
+              <div className="mb-4 w-full h-75 relative">
                 <Image
                   src={imageShow}
                   alt="image"
@@ -158,7 +158,7 @@ const Addbanner = () => {
             )}
             <Button
               disabled={loader ? true : false}
-              className="bg-blue-500 w-[190px] hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3"
+              className="bg-blue-500 w-47.5 hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3"
             >
               {loader ? <Loader2 className="animate-spin" /> : "update banner"}
             </Button>

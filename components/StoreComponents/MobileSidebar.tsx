@@ -40,7 +40,7 @@ const MobileSidebar = ({
             } z-20 md:hidden`}
           ></div>
           <div
-            className={`fixed top-0 left-0 w-[300px] h-screen bg-white pt-2 px-8 transition-transform duration-300 ${
+            className={`fixed top-0 left-0 w-75 h-screen bg-white pt-2 px-8 transition-transform duration-300 ${
               showShidebar ? "translate-x-0" : "-translate-x-full"
             } z-30 md:hidden`}
           >
@@ -54,7 +54,7 @@ const MobileSidebar = ({
                 />
               </Link>
               <div className="flex justify-star items-center gap-10">
-                <div className="flex group cursor-pointer text-slate-800 text-sm justify-center items-center gap-1 relative after:h-[18px] after:w-[1px] after:bg-[#afafaf] after:-right-[16px] after:absolute">
+                <div className="flex group cursor-pointer text-slate-800 text-sm justify-center items-center gap-1 relative after:h-4.5 after:w-px after:bg-[#afafaf] after:-right-4 after:absolute">
                   <Image
                     src="/images/language.png"
                     alt="language"
@@ -64,7 +64,7 @@ const MobileSidebar = ({
                   <span>
                     <MdOutlineKeyboardArrowDown />
                   </span>
-                  <ul className="absolute invisible transition-all to-12 rounded-sm duration-200 text-white p-2 w-[100px] flex flex-col gap-3 group-hover:visible group-hover:top-6 group-hover:bg-black z-10">
+                  <ul className="absolute invisible transition-all to-12 rounded-sm duration-200 text-white p-2 w-25 flex flex-col gap-3 group-hover:visible group-hover:top-6 group-hover:bg-black z-10">
                     <li>Hindi</li>
                     <li>English</li>
                   </ul>
@@ -180,7 +180,7 @@ const MobileSidebar = ({
                 </a>
               </div>
               <div className="w-full flex justify-end max-md:justify-start gap-4 items-center">
-                <div className="w-[30px] h-[30px] rounded-full flex bg-[#f5f5f5] justify-center items-center">
+                <div className="w-7.5 h-7.5 rounded-full flex bg-[#f5f5f5] justify-center items-center">
                   <span>
                     <IoIosCall />
                   </span>

@@ -10,7 +10,7 @@ const SkeletonProductCard = ({ layout = "grid" }: { layout?: "grid" | "list" }) 
     >
       <div
         className={`relative flex justify-center items-center p-4 ${
-          layout === "list" ? "w-[60%] h-[180px]" : ""
+          layout === "list" ? "w-[60%] h-45" : ""
         }`}
       >
         <Skeleton className="w-28 h-28 sm:w-32 sm:h-32 rounded-md" />

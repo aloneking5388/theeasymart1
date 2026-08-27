@@ -7,10 +7,10 @@ const page = () => {
   return (
     <div>
       <div className="bg-[#eeeeee] w-full">
-        <div className="max-w-[1440px] mx-auto md-lg:px-12 px-10 pt-6">
+        <div className="max-w-360 mx-auto md-lg:px-12 px-10 pt-6">
           <section
             style={{ backgroundImage: 'url("/images/banner/order.jpg")' }}
-            className="h-[220px]  bg-cover bg-no-repeat relative bg-left"
+            className="h-55  bg-cover bg-no-repeat relative bg-left"
           >
             <div className="absolute left-0 top-0 w-full h-full bg-[#2422228a]">
               <div className="w-full h-full mx-auto">

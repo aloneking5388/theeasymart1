@@ -109,12 +109,12 @@ const OrdersPage = () => {
                   </td>
                   <td scope="row" className="px-6 py-3 whitespace-nowrap text-[13px] max-md:px-2 max-md:text-[10px]">
                     <Link href={`/dashboard/orders/${ord._id}`}>
-                      <span className="bg-green-100 text-green-800 text-sm max-md:text-[8px] font-normal mr-2 px-2.5 max-md:px-1 py-[1px] rounded">
+                      <span className="bg-green-100 text-green-800 text-sm max-md:text-[8px] font-normal mr-2 px-2.5 max-md:px-1 py-px rounded">
                         view
                       </span>
                     </Link>
                     {ord.payment_status !== "paid" && (
-                      <span onClick={() => redirect(ord)} className="bg-red-100 text-red-800 text-sm max-md:text-[8px] font-normal mr-2 px-2.5 max-md:px-1 py-[1px] rounded cursor-pointer">
+                      <span onClick={() => redirect(ord)} className="bg-red-100 text-red-800 text-sm max-md:text-[8px] font-normal mr-2 px-2.5 max-md:px-1 py-px rounded cursor-pointer">
                         Pay Now
                       </span>
                     )}

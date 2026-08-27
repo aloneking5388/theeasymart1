@@ -59,7 +59,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-purple-100">
-      <div className="lg:grid flex flex-wrap sm:grid-cols-1 gap-6 lg:grid-cols-3 max-w-[1440px] px-16 md:px-10 mx-auto border-b py-14 md:pb-10 sm:pb-6">
+      <div className="lg:grid flex flex-wrap sm:grid-cols-1 gap-6 lg:grid-cols-3 max-w-360 px-16 md:px-10 mx-auto border-b py-14 md:pb-10 sm:pb-6">
         <div className="md:w-6/12 lg:w-8/12 w-full">
           <div className="flex flex-col gap-2 max-md:justify-start max-md:items-start lg:justify-center lg:items-center">
             <Image
@@ -67,7 +67,7 @@ const Footer = () => {
               height={70}
               src="/images/logo.png"
               alt="logo"
-              className="max-md:w-[150px] max-md:h-[50px]"
+              className="max-md:w-37.5 max-md:h-12.5"
             />
             <ul className="flex flex-col gap-2 text-md font-semibold text-slate-700">
               <li className="flex flex-row gap-2 justify-start items-center">
@@ -89,7 +89,7 @@ const Footer = () => {
               <h2 className="font-bold max-md:font-semibold max-md:text-md text-lg  mb-2">
                 Usefull links
               </h2>
-              <div className="flex justify-between gap-[80px] lg:gap-[40px]">
+              <div className="flex justify-between gap-20 lg:gap-10">
                 <ul className="flex flex-col gap-2 max-sm:w-[80] max-md:gap-1 max-md:text-xs text-slate-700 text-sm">
                   <li>
                     <Link href="/about">About Us</Link>
@@ -132,7 +132,7 @@ const Footer = () => {
             </span>
             <form
               onSubmit={handleSubscribe}
-              className="h-[40px] rounded-lg w-full bg-slate-100 border relative"
+              className="h-10 rounded-lg w-full bg-slate-100 border relative"
             >
               <Input
                 name="email"
@@ -152,7 +152,7 @@ const Footer = () => {
             <ul className="flex justify-start items-center gap-3">
               <li>
                 <a
-                  className="w-[38px] h-[38px] max-md:w-[28px] text-blue-700 max-md:h-[28px] hover:bg-blue-700 hover:text-white flex justify-center items-center bg-white rounded-full"
+                  className="w-9.5 h-9.5 max-md:w-7 text-blue-700 max-md:h-7 hover:bg-blue-700 hover:text-white flex justify-center items-center bg-white rounded-full"
                   href="#"
                 >
                   <FaFacebookF />
@@ -160,7 +160,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  className="w-[38px] h-[38px] max-md:w-[28px] text-blue-400 max-md:h-[28px] hover:bg-blue-400 hover:text-white flex justify-center items-center bg-white rounded-full"
+                  className="w-9.5 h-9.5 max-md:w-7 text-blue-400 max-md:h-7 hover:bg-blue-400 hover:text-white flex justify-center items-center bg-white rounded-full"
                   href="#"
                 >
                   <AiOutlineTwitter />
@@ -168,7 +168,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  className="w-[38px] h-[38px] max-md:w-[28px] text-blue-900 max-md:h-[28px] hover:bg-blue-900 hover:text-white flex justify-center items-center bg-white rounded-full"
+                  className="w-9.5 h-9.5 max-md:w-7 text-blue-900 max-md:h-7 hover:bg-blue-900 hover:text-white flex justify-center items-center bg-white rounded-full"
                   href="#"
                 >
                   <FaLinkedin />
@@ -176,7 +176,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  className="w-[38px] h-[38px] max-md:w-[28px] text-black max-md:h-[28px] hover:bg-black hover:text-white flex justify-center items-center bg-white rounded-full"
+                  className="w-9.5 h-9.5 max-md:w-7 text-black max-md:h-7 hover:bg-black hover:text-white flex justify-center items-center bg-white rounded-full"
                   href="https://www.github.com/aloneiing5388"
                 >
                   <AiFillGithub />
@@ -194,22 +194,22 @@ const Footer = () => {
           </a>
         </span>
       </div>
-      <div className="hidden fixed max-md:block w-[50px] bottom-3 h-[110px] right-2 bg-white rounded-full z-10 p-2">
+      <div className="hidden fixed max-md:block w-12.5 bottom-3 h-27.5 right-2 bg-white rounded-full z-10 p-2">
         <div className="w-full h-full flex gap-3 flex-col justify-center items-center">
-          <div className="relative flex justify-center items-center cursor-pointer w-[35px] h-[35px] rounded-full bg-[#e2e2e2]">
+          <div className="relative flex justify-center items-center cursor-pointer w-8.75 h-8.75 rounded-full bg-[#e2e2e2]">
             <span className="text-xl text-purple-600">
               <AiFillShopping />
             </span>
             {cartCount > 0 && (
               <div
                 onClick={() => router.push(userInfo ? "/cart" : "login")}
-                className="w-[20px] h-[20px] absolute bg-red-700 rounded-full text-xs text-white flex justify-center items-center -top-[3px] -right-[5px]"
+                className="w-5 h-5 absolute bg-red-700 rounded-full text-xs text-white flex justify-center items-center -top-0.75 -right-1.25"
               >
                 {cartCount}
               </div>
             )}
           </div>
-          <div className="relative flex justify-center items-center cursor-pointer w-[35px] h-[35px] rounded-full bg-[#e2e2e2]">
+          <div className="relative flex justify-center items-center cursor-pointer w-8.75 h-8.75 rounded-full bg-[#e2e2e2]">
             <span className="text-xl text-pink-600">
               <AiFillHeart />
             </span>
@@ -218,7 +218,7 @@ const Footer = () => {
                 onClick={() =>
                   router.push(userInfo ? "/dashboard/wishlist" : "login")
                 }
-                className="w-[20px] h-[20px] absolute bg-red-700 rounded-full text-xs text-white flex justify-center items-center -top-[3px] -right-[5px]"
+                className="w-5 h-5 absolute bg-red-700 rounded-full text-xs text-white flex justify-center items-center -top-0.75 -right-1.25"
               >
                 {wishlistCount}
               </div>

@@ -7,10 +7,10 @@ const CategoryShops = () => {
 
   return (
     <div>
-      <div className="max-w-[1440px] mx-auto lg:px-12 md:px-10">
+      <div className="max-w-360 mx-auto lg:px-12 md:px-10">
         <section
           style={{ backgroundImage: 'url("/images/banner/shop.gif")' }}
-          className="h-[200px] mt-6 bg-cover bg-no-repeat relative bg-left"
+          className="h-50 mt-6 bg-cover bg-no-repeat relative bg-left"
         >
           <div className="absolute left-0 top-0 w-full h-full bg-[#2422228a]">
             <div className="w-full h-full mx-auto">

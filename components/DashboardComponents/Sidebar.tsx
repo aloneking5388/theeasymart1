@@ -43,10 +43,10 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
       else router.push("/");
       dispatch(authMessageClear()); // Clear the message after showing it
     }
-  },[successMessage, role, router, dispatch]);
+  }, [successMessage, role, router, dispatch]);
 
   const handleLogout = () => {
-    dispatch(logout({role}))
+    dispatch(logout({ role }));
   };
 
   return (
@@ -58,12 +58,16 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
         } w-screen h-screen bg-[#22292f80] top-0 left-0 z-10`}
       ></div>
       <div
-        className={`w-[260px] fixed bg-[#283046] z-50 top-0 h-screen shadow-[0_0_15px_0_rgb(34_41_47_/_5%)] transition-all ${
-          showSidebar ? "left-0" : "-left-[260px] lg:left-0"
+        className={`w-65 fixed bg-[#283046] z-50 top-0 h-screen shadow-[0_0_15px_0_rgb(34_41_47/5%)] transition-all ${
+          showSidebar ? "left-0" : "-left-65 lg:left-0"
         }`}
       >
-        <div className="h-[70px] flex justify-center items-center">
-          <Link href="/" className="w-[180px] h-[50px]" onClick={() => setShowSidebar(!showSidebar)}>
+        <div className="h-17.5 flex justify-center items-center">
+          <Link
+            href="/"
+            className="w-45 h-12.5"
+            onClick={() => setShowSidebar(!showSidebar)}
+          >
             <Image
               src={"/images/logo.png"}
               alt="Logo"
@@ -72,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
             />
           </Link>
         </div>
-        <div className="px-[16px]">
+        <div className="px-4">
           <ul>
             {allNav.map((n) => (
               <li key={n.id}>
@@ -83,7 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
                     pathname === n.path
                       ? "bg-slate-600 shadow-indigo-500/30 text-white duration-500"
                       : "text-[#d0d2d6] font-normal duration-200"
-                  } px-[12px] py-[9px] rounded-sm flex justify-start items-center gap-[12px] hover:pl-4 transition-all w-full mb-1`}
+                  } px-3 py-2.25 rounded-sm flex justify-start items-center gap-3 hover:pl-4 transition-all w-full mb-1`}
                 >
                   <span>{n.icon}</span>
                   <span>{n.title}</span>
@@ -93,7 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
             <li>
               <button
                 onClick={handleLogout} // Using the handleLogout function to manage logout
-                className="text-[#d0d2d6] font-normal duration-200 px-[12px] py-[9px] rounded-sm flex justify-start items-center gap-[12px] hover:pl-4 transition-all w-full mb-1"
+                className="text-[#d0d2d6] font-normal duration-200 px-3 py-2.25 rounded-sm flex justify-start items-center gap-3 hover:pl-4 transition-all w-full mb-1"
               >
                 <span>
                   <BiLogInCircle />

@@ -42,14 +42,14 @@ const Products = ({ title, products, loader }: ProductsProps) => {
             >
               <Link
                 href={`/products/${pl.slug}`}
-                className="flex flex-row lg:h-[180px] bg-slate-200 rounded-md overflow-hidden items-center p-4"
+                className="flex flex-row lg:h-45 bg-slate-200 rounded-md overflow-hidden items-center p-4"
               >
                 <Image
                   src={pl.images[0]}
                   alt={pl.name}
                   width={150}
                   height={150}
-                  className="max-md:w-[100px] max-md:h-[100px] mr-4"
+                  className="max-md:w-25 max-md:h-25 mr-4"
                 />
                 <div className="flex flex-col justify-between items-start mr-2 text-slate-700">
                   <h2 className="text-[14px] font-semibold text-start">

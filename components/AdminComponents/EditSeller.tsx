@@ -126,7 +126,7 @@ const EditSeller = () => {
             onSubmit={handleSubmit}
             className="mt-6 flex flex-col sm:flex-row gap-4"
           >
-            <div className="w-full sm:w-[200px] flex flex-row gap-2">
+            <div className="w-full sm:w-50 flex flex-row gap-2">
               <Label>Status</Label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger className="bg-[#283046] text-[#d0d2d6] border-slate-700">
@@ -138,7 +138,7 @@ const EditSeller = () => {
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="bg-blue-500 w-[170px]">
+            <Button type="submit" className="bg-blue-500 w-42.5">
               {loader ? (
                 <Loader2 className="animate-spin text-white w-5 -h-5" />
               ) : (

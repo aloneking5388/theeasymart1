@@ -98,7 +98,7 @@ const SideFillter = () => {
   return (
     <div>
       <section className="py-8">
-        <div className="max-w-[1440px] mx-auto px-5 lg:px-12 md:px-10">
+        <div className="max-w-360 mx-auto px-5 lg:px-12 md:px-10">
           <div className={`md:block hidden ${!filter ? "mb-6" : "mb-3"}`}>
             <button
               onClick={() => setFilter(!filter)}
@@ -157,7 +157,7 @@ const SideFillter = () => {
                     renderTrack={({ props, children }) => (
                       <div
                         {...props}
-                        className="flex mx-2 w-[80%] h-[6px] bg-slate-200 rounded-full cursor-default"
+                        className="flex mx-2 w-[80%] h-1.5 bg-slate-200 rounded-full cursor-default"
                       >
                         {children}
                       </div>
@@ -167,7 +167,7 @@ const SideFillter = () => {
                       return (
                         <div
                           key={key}
-                          className="w-[15px] h-[15px] bg-blue-500 rounded-full"
+                          className="w-3.75 h-3.75 bg-blue-500 rounded-full"
                           {...restProps}
                         />
                       );

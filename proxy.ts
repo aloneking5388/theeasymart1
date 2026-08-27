@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { decodeToken } from "./utils/jwt-decode";
 
-export function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const url = req.nextUrl.clone();
   const pathname = url.pathname;
   const token = req.cookies.get("token")?.value;
@@ -30,14 +30,14 @@ export function proxy(req: NextRequest) {
 
   // ✅ Allow public routes and their sub-routes (like /products/slug)
   const isPublic = publicRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
+    (route) => pathname === route || pathname.startsWith(route + "/"),
   );
   if (isPublic) return NextResponse.next();
 
   // ❌ Token check
   if (!token) return NextResponse.redirect(new URL("/", req.url));
 
-  const decoded = decodeToken(token);
+  const decoded = await decodeToken(token);
   if (!decoded) return NextResponse.redirect(new URL("/", req.url));
 
   const { role, status } = decoded;
@@ -63,10 +63,10 @@ export function proxy(req: NextRequest) {
     ];
 
     const isAllowed = allowedIfRestricted.some((route) =>
-      pathname.startsWith(route)
+      pathname.startsWith(route),
     );
     const isRestricted = restrictedRoutes.some((route) =>
-      pathname.startsWith(route)
+      pathname.startsWith(route),
     );
 
     if (["pending", "deactive"].includes(status || "")) {

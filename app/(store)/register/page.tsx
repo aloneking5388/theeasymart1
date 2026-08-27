@@ -71,12 +71,12 @@ const RegisterPage = () => {
   return (
     <div>
       {loader && (
-        <div className="w-screen h-screen flex justify-center items-center fixed left-0 top-0 bg-[#38303033] z-[999]">
+        <div className="w-screen h-screen flex justify-center items-center fixed left-0 top-0 bg-[#38303033] z-999">
           <FadeLoader />
         </div>
       )}
       <div className="bg-slate-200 mt-4">
-        <div className="max-w-[1440px] mx-auto px-5 lg:px-16 md:px-12 justify-center items-center md:p-10 p-5">
+        <div className="max-w-360 mx-auto px-5 lg:px-16 md:px-12 justify-center items-center md:p-10 p-5">
           <div className="grid lg:grid-cols-2 grid-cols-1 md:grid-cols-1  w-full md:w-full sm:w-full mx-auto bg-white rounded-md">
             <div className="px-8 py-8 md-lg:w-full md:w-full sm:w-full">
               <h2 className="text-center w-full text-xl text-slate-600 font-bold">
@@ -135,9 +135,9 @@ const RegisterPage = () => {
                   </Button>
                 </form>
                 <div className="flex justify-center items-center py-2">
-                  <div className="h-[1px] bg-slate-300 w-[95%]"></div>
+                  <div className="h-px bg-slate-300 w-[95%]"></div>
                   <span className="px-3 text-slate-600">or</span>
-                  <div className="h-[1px] bg-slate-300 w-[95%]"></div>
+                  <div className="h-px bg-slate-300 w-[95%]"></div>
                 </div>
                 <Button className="px-8 w-full py-2 bg-indigo-500 shadow hover:shadow-indigo-500/30 text-white rounded-md flex justify-center items-center gap-2 mb-3">
                   <span>
@@ -164,7 +164,7 @@ const RegisterPage = () => {
             </div>
             <div className="md:w-full md:h-full py-4 pr-4 md:block hidden">
               <Image
-                className="flex justify-center items-center w-[600px] h-[380px]"
+                className="flex justify-center items-center w-150 h-95"
                 src="/images/login.jpg"
                 alt="login"
                 width={600}

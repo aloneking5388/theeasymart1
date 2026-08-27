@@ -43,9 +43,9 @@ const RelatedProduct = () => {
                     <div className="w-full flex flex-col justify-center items-center">
                       <Link
                         href={`/products/${p.slug}`}
-                        className="flex lg:flex-row justify-center flex-col min-w-[230px] max-w-[350px] bg-slate-100 rounded-md shadow-md"
+                        className="flex lg:flex-row justify-center flex-col min-w-57.5 max-w-87.5 bg-slate-100 rounded-md shadow-md"
                       >
-                        <div className="relative h-[200px] w-[200px]">
+                        <div className="relative h-50 w-50">
                           <Image
                             width={200}
                             height={200}
@@ -53,15 +53,15 @@ const RelatedProduct = () => {
                             alt={p.name}
                             className="rounded object-cover"
                           />
-                          <div className="absolute rounded-md h-[200px] w-[200px] top-0 left-0 opacity-25 hover:opacity-50 transition-all duration-500"></div>
+                          <div className="absolute rounded-md h-50 w-50 top-0 left-0 opacity-25 hover:opacity-50 transition-all duration-500"></div>
                           {p.discount !== 0 && (
-                            <div className="flex justify-center items-center absolute text-white w-[38px] h-[38px] rounded-full bg-red-500 font-semibold text-xs left-2 top-2">
+                            <div className="flex justify-center items-center absolute text-white w-9.5 h-9.5 rounded-full bg-red-500 font-semibold text-xs left-2 top-2">
                               {p.discount}%
                             </div>
                           )}
                         </div>
                         <div className="p-4 flex flex-col gap-1">
-                          <h2 className="text-slate-600 text-base md:text-lg font-semibold truncate max-w-[200px]">
+                          <h2 className="text-slate-600 text-base md:text-lg font-semibold truncate max-w-50">
                             {p.name}
                           </h2>
                           <div className="flex flex-col justify-start items-start gap-3">

@@ -13,7 +13,7 @@ const TopHeaderSlider = () => {
   if (!products.length) return null;
 
   return (
-    <div className="flex items-center h-full max-w-[700px] overflow-hidden">
+    <div className="flex items-center h-full max-w-175 overflow-hidden">
       <Swiper
         modules={[Autoplay]}
         spaceBetween={10}

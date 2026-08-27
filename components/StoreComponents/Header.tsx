@@ -46,13 +46,13 @@ const StoreHeader = () => {
     <div className="w-full bg-white lg:mb-2">
       <TopHeader />
       <div className="bg-white ">
-        <div className="max-w-[1440px] mx-auto px-5 md:px-8 mb-4">
-          <div className="h-[60px] max-md:h-[40px] flex justify-between items-center flex-wrap">
+        <div className="max-w-360 mx-auto px-5 md:px-8 mb-4">
+          <div className="h-15 max-md:h-10 flex justify-between items-center flex-wrap">
             <div className="max-md:w-full w-3/12 max-sm:py-2 mb-2">
               <div className="flex md:ml-13 justify-between items-center">
                 <Link href="/">
                   <Image
-                    className="max-md:w-[180px] max-md:h-[60px]"
+                    className="max-md:w-45 max-md:h-15"
                     src="/images/logo.png"
                     alt="logo"
                     width={260}
@@ -60,7 +60,7 @@ const StoreHeader = () => {
                   />
                 </Link>
                 <div
-                  className="justify-center items-center w-[30px] h-[30px] bg-white text-slate-600 border border-slate-600 rounded-sm cursor-pointer lg:hidden max-md:flex xl:hidden hidden"
+                  className="justify-center items-center w-7.5 h-7.5 bg-white text-slate-600 border border-slate-600 rounded-sm cursor-pointer lg:hidden max-md:flex xl:hidden hidden"
                   onClick={() => setShowShidebar(!showShidebar)}
                 >
                   <span>
@@ -139,13 +139,13 @@ const StoreHeader = () => {
                           userInfo ? "/dashboard/wishlist" : "/login"
                         )
                       }
-                      className="relative flex justify-center items-center cursor-pointer w-[35px] h-[35px] rounded-full bg-[#e2e2e2]"
+                      className="relative flex justify-center items-center cursor-pointer w-8.75 h-8.75 rounded-full bg-[#e2e2e2]"
                     >
                       <span className="text-xl text-pink-600">
                         <AiFillHeart />
                       </span>
                       {wishlistCount !== 0 &&
-                        <div className="w-[18px] h-[18px] absolute bg-red-700 rounded-full text-white font-semibold flex text-xs justify-center items-center -top-[3px] -right-[5px]">
+                        <div className="w-4.5 h-4.5 absolute bg-red-700 rounded-full text-white font-semibold flex text-xs justify-center items-center -top-0.75 -right-1.25">
                         {wishlistCount}
                       </div>
                       }
@@ -156,13 +156,13 @@ const StoreHeader = () => {
                           userInfo ? "/cart" : "/login"
                         )
                       }
-                    className="relative flex justify-center items-center cursor-pointer w-[35px] h-[35px] rounded-full bg-[#e2e2e2]">
+                    className="relative flex justify-center items-center cursor-pointer w-8.75 h-8.75 rounded-full bg-[#e2e2e2]">
                       <span className="text-xl text-purple-600">
                         <AiFillShopping />
                       </span>
 
                      {cartCount !== 0 && 
-                             <div className="w-[18px] h-[18px] absolute bg-red-700 rounded-full text-white font-semibold text-xs flex justify-center items-center -top-[3px] -right-[5px]">
+                             <div className="w-4.5 h-4.5 absolute bg-red-700 rounded-full text-white font-semibold text-xs flex justify-center items-center -top-0.75 -right-1.25">
                              {cartCount}
                            </div>
                      }
@@ -181,7 +181,7 @@ const StoreHeader = () => {
             <div className="bg-white relative">
               <div
                 onClick={() => setCategoryShow(!categoryShow)}
-                className="h-[40px] rounded-xl bg-purple-400 hover:bg-purple-600 text-white flex justify-center max-md:justify-between max-md:px-6 items-center gap-3 font-bold text-md cursor-pointer"
+                className="h-10 rounded-xl bg-purple-400 hover:bg-purple-600 text-white flex justify-center max-md:justify-between max-md:px-6 items-center gap-3 font-bold text-md cursor-pointer"
               >
                 <div className="flex justify-center items-center gap-3">
                   <span>
@@ -195,15 +195,15 @@ const StoreHeader = () => {
               </div>
               <div
                 className={`${
-                  categoryShow ? "h-0" : "h-[400px]"
-                } overflow-hidden rounded-xl transition-all max-md:relative duration-500 absolute z-[99999] bg-white w-full border-x`}
+                  categoryShow ? "h-0" : "h-100"
+                } overflow-hidden rounded-xl transition-all max-md:relative duration-500 absolute z-99999 bg-white w-full border-x`}
               >
                 <ul className="py-2 text-slate-600 font-medium h-full overflow-auto">
                   {categorys.map((c, i) => {
                     return (
                       <li
                         key={i}
-                        className="flex justify-start items-center gap-2 px-[24px] py-[6px]"
+                        className="flex justify-start items-center gap-2 px-6 py-1.5"
                       >
                         <Image
                           src={c.image}
@@ -229,11 +229,11 @@ const StoreHeader = () => {
           <div className="w-9/12 pl-8 max-md:pl-0 max-md:w-full">
             <div className="flex flex-wrap w-full justify-between items-center max-md:gap-6">
               <div className="w-8/12 max-md:w-full">
-                <div className="flex border h-[40px] rounded-xl items-center relative gap-5">
-                  <div className="relative after:absolute after:h-[25px] after:w-[1px] after:bg-[#afafaf] after:-right-[15px] max-md:hidden">
+                <div className="flex border h-10 rounded-xl items-center relative gap-5">
+                  <div className="relative after:absolute after:h-6.25 after:w-px after:bg-[#afafaf] after:-right-3.75 max-md:hidden">
                     <select
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-[150px] text-slate-600 font-semibold bg-transparent px-2 h-full outline-0 border-none"
+                      className="w-37.5 text-slate-600 font-semibold bg-transparent px-2 h-full outline-0 border-none"
                       name=""
                       id=""
                     >
@@ -264,7 +264,7 @@ const StoreHeader = () => {
               </div>
               <div className="w-4/12 block max-md:hidden pl-2 max-md:w-full max-md:pl-0">
                 <div className="w-full flex justify-end max-md:justify-start gap-3 items-center">
-                  <div className="w-[40px] h-[40px] rounded-full flex bg-purple-100 justify-center items-center">
+                  <div className="w-10 h-10 rounded-full flex bg-purple-100 justify-center items-center">
                     <span>
                       <IoIosCall />
                     </span>

@@ -40,7 +40,7 @@ const WishlistPage = () => {
         >
           <div className="relative overflow-hidden">
             {p.discount !== 0 && (
-              <div className="flex justify-center items-center absolute text-white w-[38px] h-[38px] rounded-full bg-red-500 font-semibold text-xs left-2 top-2">
+              <div className="flex justify-center items-center absolute text-white w-9.5 h-9.5 rounded-full bg-red-500 font-semibold text-xs left-2 top-2">
                 {p.discount}%
               </div>
             )}
@@ -52,20 +52,20 @@ const WishlistPage = () => {
               width={200}
               height={200}
             />
-            <ul className="flex transition-all duration-700 -bottom-10 max-sm:bottom-[1px] justify-center items-center gap-2 absolute w-full group-hover:bottom-3">
+            <ul className="flex transition-all duration-700 -bottom-10 max-sm:bottom-px justify-center items-center gap-2 absolute w-full group-hover:bottom-3">
               <li
                 onClick={() => dispatch(deleteWishlistItem(p._id))}
-                className="w-[38px] h-[38px] max-sm:w-7 max-sm:h-7 max-sm:text-[10px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-red-500 hover:text-white hover:rotate-[720deg] transition-all"
+                className="w-9.5 h-9.5 max-sm:w-7 max-sm:h-7 max-sm:text-[10px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-red-500 hover:text-white hover:rotate-[720deg] transition-all"
               >
                 <AiFillDelete />
               </li>
               <Link
                 href={`/product/details/${p.slug}`}
-                className="w-[38px] h-[38px] max-sm:w-7 max-sm:h-7 max-sm:text-[10px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#7fad39] hover:text-white hover:rotate-[720deg] transition-all"
+                className="w-9.5 h-9.5 max-sm:w-7 max-sm:h-7 max-sm:text-[10px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#7fad39] hover:text-white hover:rotate-[720deg] transition-all"
               >
                 <FaEye />
               </Link>
-              <li className="w-[38px] h-[38px] max-sm:w-7 max-sm:h-7 max-sm:text-[10px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#7fad39] hover:text-white hover:rotate-[720deg] transition-all">
+              <li className="w-9.5 h-9.5 max-sm:w-7 max-sm:h-7 max-sm:text-[10px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#7fad39] hover:text-white hover:rotate-[720deg] transition-all">
                 <AiOutlineShoppingCart />
               </li>
             </ul>

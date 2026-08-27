@@ -162,7 +162,7 @@ const ShippingForm = ({ state, setState }: ShippingFormProps) => {
                 />
               </div>
               <div className="flex flex-col max-sm:text-sm gap-1 max-sm:mt-3 mt-8 w-full">
-                <button className="px-3 py-[6px] rounded-sm hover:shadow-indigo-500/20 hover:shadow-lg bg-indigo-500 text-white">
+                <button className="px-3 py-1.5 rounded-sm hover:shadow-indigo-500/20 hover:shadow-lg bg-indigo-500 text-white">
                   Save
                 </button>
               </div>

@@ -105,25 +105,25 @@ const ProductTable = ({
                   <div className="flex gap-2">
                     <Link
                       href={`/seller/allproducts/editproduct/${d.id}`}
-                      className="p-[6px] bg-yellow-500 rounded"
+                      className="p-1.5 bg-yellow-500 rounded"
                     >
                       <FaEdit />
                     </Link>
                     <Link
                       href={`/seller/allproducts/editproduct/${d.id}`}
-                      className="p-[6px] bg-green-500 rounded"
+                      className="p-1.5 bg-green-500 rounded"
                     >
                       <FaEye />
                     </Link>
                     <Button
                       onClick={() => onDelete(d.id)}
-                      className="p-[6px] w-[28px] h-[28px] bg-red-500 rounded"
+                      className="p-1.5 w-7 h-7 bg-red-500 rounded"
                     >
                       <FaTrash />
                     </Button>
                     <Link
                       href={`/seller/banner/${d.id}`}
-                      className="p-[6px] bg-cyan-500 rounded"
+                      className="p-1.5 bg-cyan-500 rounded"
                     >
                       <GiKnightBanner />
                     </Link>

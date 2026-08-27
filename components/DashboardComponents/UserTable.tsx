@@ -71,7 +71,7 @@ const UserTable: React.FC<UserTableProps> = ({
           render: (row: any) => (
             <Link
               href={`/admin/customers/${row._id}`}
-              className="flex flex-col justify-center items-center bg-green-500 p-[6px] rounded hover:shadow-lg hover:shadow-green-500/50"
+              className="flex flex-col justify-center items-center bg-green-500 p-1.5 rounded hover:shadow-lg hover:shadow-green-500/50"
             >
               <FaEye />
             </Link>
@@ -118,7 +118,7 @@ const UserTable: React.FC<UserTableProps> = ({
           render: (row: any) => (
             <Link
               href={`/admin/sellers/${row._id}`}
-              className="flex flex-col justify-center items-center bg-green-500 p-[6px] rounded hover:shadow-lg hover:shadow-green-500/50"
+              className="flex flex-col justify-center items-center bg-green-500 p-1.5 rounded hover:shadow-lg hover:shadow-green-500/50"
             >
               <FaEye />
             </Link>

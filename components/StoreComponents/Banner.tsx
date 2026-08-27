@@ -25,7 +25,7 @@ const Banner = () => {
 
   return (
     <div className="w-full max-sm:my-4">
-      <div className="max-w-[1440px] mx-auto px-4 md:px-10">
+      <div className="max-w-360 mx-auto px-4 md:px-10">
         <div className="w-full">
           <div className="lg:my-8 my-2">
             {!hasBanners || loader ? (
@@ -41,7 +41,7 @@ const Banner = () => {
                     <CarouselItem key={index}>
                       <Link
                         href={`/products/${link}`}
-                        className="block w-full sm:h-[400px] h-[110px] relative"
+                        className="block w-full sm:h-100 h-27.5 relative"
                       >
                         <Image
                           src={banner}

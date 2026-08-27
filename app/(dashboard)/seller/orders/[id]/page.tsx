@@ -58,7 +58,7 @@ const page = () => {
                     {order?.products?.map((p, i) => (
                       <div key={i} className="flex gap-3 text-md">
                         <img
-                          className="w-[45px] h-[45px]"
+                          className="w-11.25 h-11.25"
                           src={p.images[0]}
                           alt=""
                         />

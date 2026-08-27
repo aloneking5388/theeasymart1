@@ -194,7 +194,7 @@ const UpdateProduct = () => {
                 />
               </div>
               <div className="pt-14"></div>
-              <div className="flex justify-start items-start flex-col h-[200px] overflow-x-scrool">
+              <div className="flex justify-start items-start flex-col h-50 overflow-x-scrool">
                 {allCategory.length > 0 &&
                   allCategory.map((c, i) => (
                     <span
@@ -280,7 +280,7 @@ const UpdateProduct = () => {
             const isFile = img instanceof File;
 
             return (
-              <div key={i} className="h-[180px] relative">
+              <div key={i} className="h-45 relative">
                 <Label htmlFor={String(i)}>
                   <Image
                     src={isFile ? URL.createObjectURL(img) : img}
@@ -307,7 +307,7 @@ const UpdateProduct = () => {
         <div className="flex">
           <Button
             disabled={loader ? true : false}
-            className="bg-blue-500 w-[190px] hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3"
+            className="bg-blue-500 w-47.5 hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3"
           >
             {loader ? <Loader2 className="animate-spin" /> : "Update product"}
           </Button>

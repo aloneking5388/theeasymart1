@@ -28,7 +28,7 @@ export default function DashboardShell({
     <>
       <Header showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <div className="ml-0 lg:ml-[260px] pt-[95px] transition-all">
+      <div className="ml-0 lg:ml-65 pt-23.75 transition-all">
         {children}
       </div>
     </>

@@ -47,7 +47,7 @@ const OrderDetailsPage = () => {
           <p>
             Payment status:{" "}
             <span
-              className={`py-[2px] text-xs px-3 ${
+              className={`py-0.5 text-xs px-3 ${
                 myOrder?.payment_status === "paid"
                   ? "bg-green-100 text-green-800"
                   : "bg-red-100 text-red-800"
@@ -58,7 +58,7 @@ const OrderDetailsPage = () => {
           </p>
           <p>
             Payment gateway:{" "}
-            <span className="py-[2px] text-xs px-3 bg-slate-100 text-slate-700 rounded-md">
+            <span className="py-0.5 text-xs px-3 bg-slate-100 text-slate-700 rounded-md">
               {myOrder?.payment_method || "wallet/pending"}
             </span>
           </p>
@@ -70,7 +70,7 @@ const OrderDetailsPage = () => {
           <p>
             Order status:{" "}
             <span
-              className={`py-[2px] text-xs px-3 ${
+              className={`py-0.5 text-xs px-3 ${
                 myOrder?.delivery_status === "pending"
                   ? "bg-red-100 text-red-800"
                   : "bg-indigo-100 text-indigo-800"

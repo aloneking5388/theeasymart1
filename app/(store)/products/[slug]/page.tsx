@@ -23,10 +23,10 @@ const ProductPage = ({ params }: { params: Promise<{ slug: string }> }) => {
 
   return (
     <div className="">
-      <div className="max-w-[1440px] mx-auto px-5 lg:px-12 md:px-10">
+      <div className="max-w-360 mx-auto px-5 lg:px-12 md:px-10">
         <div
           style={{ backgroundImage: 'url("/images/banner/order.jpg")' }}
-          className=" h-[220px] mt-6 bg-cover bg-no-repeat relative bg-left"
+          className=" h-55 mt-6 bg-cover bg-no-repeat relative bg-left"
         >
           <div className="absolute left-0 top-0 w-full h-full bg-[#2422228a]">
             <div className="w-full h-full mx-auto">
@@ -37,7 +37,7 @@ const ProductPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           </div>
         </div>
       </div>
-      <div className="max-w-[1440px] mx-auto px-5 lg:px-12 md:px-10">
+      <div className="max-w-360 mx-auto px-5 lg:px-12 md:px-10">
         <div className="bg-slate-100 py-5 mb-5 px-3">
           <div className="flex justify-start items-center max-md:text-xs text-md text-slate-600 w-full">
             <Link href="/">Home</Link>
@@ -53,17 +53,17 @@ const ProductPage = ({ params }: { params: Promise<{ slug: string }> }) => {
         </div>
       </div>
       <section>
-        <div className="max-w-[1440px] mx-auto lg:px-14 px-10 pb-16">
+        <div className="max-w-360 mx-auto lg:px-14 px-10 pb-16">
           <ProductDetail />
         </div>
       </section>
       <section>
-        <div className="max-w-[1440px] mx-auto px-12 max-sm:px-8 pb-16">
+        <div className="max-w-360 mx-auto px-12 max-sm:px-8 pb-16">
           <FromShop />
         </div>
       </section>
       <section>
-        <div className="max-w-[1440px] mx-auto px-5 lg:px-12 md:px-10">
+        <div className="max-w-360 mx-auto px-5 lg:px-12 md:px-10">
           <h2 className="text-xl font-bold py-8 text-slate-600">
             Related Products
           </h2>

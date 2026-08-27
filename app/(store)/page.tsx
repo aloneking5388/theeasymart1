@@ -7,14 +7,14 @@ export default function Home() {
   return (
     <main className="w-full">
       <Banner />
-      <div className="lg:my-4 my-1 max-w-[1440px] mx-auto px-5 md:px-10 lg:px-16">
+      <div className="lg:my-4 my-1 max-w-360 mx-auto px-5 md:px-10 lg:px-16">
         <Categorys />
       </div>
-      <div className="lg:py-[45px] py-2 max-w-[1440px] mx-auto px-5 md:px-10 lg:px-16">
+      <div className="lg:py-11.25 py-2 max-w-360 mx-auto px-5 md:px-10 lg:px-16">
         <FeatureProducts />
       </div>
       <div className="py-10">
-        <div className="max-w-[1440px] mx-auto px-5 md:px-10 lg:px-10 flex flex-wrap">
+        <div className="max-w-360 mx-auto px-5 md:px-10 lg:px-10 flex flex-wrap">
          <Product />
         </div>
       </div>

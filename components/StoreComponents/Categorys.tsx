@@ -37,7 +37,7 @@ const Categors = () => {
                   className="gap-x-4 basis-[25%] lg:basis-[10%] md:basis-[17%]"
                 >
                   <Link
-                    className="block p-[2px] border w-full rounded-md bg-slate-200 aspect-square"
+                    className="block p-0.5 border w-full rounded-md bg-slate-200 aspect-square"
                     href={`/products?category=${c.name}`}
                   >
                     <div className="w-full hover:shadow-[1px_3px_19px_1px_rgba(194,188,194,1)] h-full gap-y-2 flex-col relative flex justify-center items-center">
@@ -49,7 +49,7 @@ const Categors = () => {
                         height={100}
                       />
                       <div className="bottom-6 w-full mx-auto font-bold left-0 flex justify-center items-center">
-                        <span className="py-[1px] md:text-[10px] text-[8px] lg:text-xs px-4">
+                        <span className="py-px md:text-[10px] text-[8px] lg:text-xs px-4">
                           {c.name}
                         </span>
                       </div>

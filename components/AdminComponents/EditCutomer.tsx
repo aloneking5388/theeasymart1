@@ -73,7 +73,7 @@ const EditCustomer = () => {
                 <img
                   src={customer?.profileImage}
                   alt="Customer"
-                  className="h-[230px] rounded-md"
+                  className="h-57.5 rounded-md"
                 />
               ) : (
                 <span>Image not uploaded</span>
@@ -106,7 +106,7 @@ const EditCustomer = () => {
             onSubmit={handleSubmit}
             className="mt-6 flex flex-col sm:flex-row gap-4"
           >
-            <div className="w-full sm:w-[200px]">
+            <div className="w-full sm:w-50">
               <Label>Status</Label>
               <Select
                 value={status}
@@ -124,7 +124,7 @@ const EditCustomer = () => {
             </div>
             <Button
               type="submit"
-              className="w-[400px] bg-blue-500 hover:bg-blue-600"
+              className="w-100 bg-blue-500 hover:bg-blue-600"
               disabled={loader}
             >
               {loader ? (

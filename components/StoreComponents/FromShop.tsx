@@ -69,7 +69,7 @@ const FromShop = () => {
                   <Link
                     key={i}
                     href={`/products/${p.slug}`}
-                    className="block max-md:w-[140px]"
+                    className="block max-md:w-35"
                   >
                     <div className="relative">
                       <Image
@@ -80,7 +80,7 @@ const FromShop = () => {
                         height={150}
                       />
                       {p.discount !== 0 && (
-                        <div className="flex justify-center items-center absolute text-white w-[38px] h-[38px] rounded-full bg-red-500 font-semibold text-xs left-2 top-2">
+                        <div className="flex justify-center items-center absolute text-white w-9.5 h-9.5 rounded-full bg-red-500 font-semibold text-xs left-2 top-2">
                           {p.discount}%
                         </div>
                       )}

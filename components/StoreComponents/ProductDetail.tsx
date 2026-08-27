@@ -207,7 +207,7 @@ const ProductDetail = () => {
         <div className="flex gap-3 pb-10 border-b">
           {product?.stock ? (
             <>
-              <div className="flex bg-slate-200 h-[50px] max-sm:h-[38px] rounded-lg justify-center items-center text-xl">
+              <div className="flex bg-slate-200 h-12.5 max-sm:h-9.5 rounded-lg justify-center items-center text-xl">
                 <div onClick={dec} className="px-6 max-md:px-3 cursor-pointer">
                   -
                 </div>
@@ -219,7 +219,7 @@ const ProductDetail = () => {
               <div>
                 <button
                   onClick={() => add_card(product.id)}
-                  className="lg:px-8 px-5 py-3 h-[50px] max-sm:h-[38px] max-md:text-[10px] rounded-lg cursor-pointer hover:shadow-lg hover:shadow-purple-500/40 bg-purple-500 text-white"
+                  className="lg:px-8 px-5 py-3 h-12.5 max-sm:h-9.5 max-md:text-[10px] rounded-lg cursor-pointer hover:shadow-lg hover:shadow-purple-500/40 bg-purple-500 text-white"
                 >
                   {loader ? (
                     <Loader2 className="animate-spin" />
@@ -234,13 +234,13 @@ const ProductDetail = () => {
           )}
           <div
             onClick={() => add_wishlist(product)}
-            className="h-[50px] w-[50px] max-md:h-[38px] max-md:w-[38px] flex justify-center rounded-full items-center cursor-pointer hover:shadow-lg hover:shadow-pink-500/40 bg-pink-500 text-white"
+            className="h-12.5 w-12.5 max-md:h-9.5 max-md:w-9.5 flex justify-center rounded-full items-center cursor-pointer hover:shadow-lg hover:shadow-pink-500/40 bg-pink-500 text-white"
           >
             <AiFillHeart />
           </div>
         </div>
         <div className="flex py-5 gap-5">
-          <div className="w-[150px] text-black font-bold max-sm:text-lg text-xl flex flex-col gap-5">
+          <div className="w-37.5 text-black font-bold max-sm:text-lg text-xl flex flex-col gap-5">
             <span>Availability</span>
             <span>Share on</span>
           </div>
@@ -260,7 +260,7 @@ const ProductDetail = () => {
           {product?.stock ? (
             <button
               onClick={buy}
-              className="lg:px-8 px-4 max-sm:h-[40px] max-md:text-[12px] rounded-lg py-3 h-[50px] cursor-pointer hover:shadow-lg hover:shadow-emerald-500/40 bg-emerald-500 text-white"
+              className="lg:px-8 px-4 max-sm:h-10 max-md:text-[12px] rounded-lg py-3 h-12.5 cursor-pointer hover:shadow-lg hover:shadow-emerald-500/40 bg-emerald-500 text-white"
             >
               {loader ? <Loader2 className="animate-spin" /> : "Buy Now"}
             </button>
@@ -269,7 +269,7 @@ const ProductDetail = () => {
           )}
           <Link
             href={`/dashboard/chat/${product?.sellerId}`}
-            className="lg:px-8 px-4 py-3 h-[50px] max-md:text-[12px] max-sm:h-[40px] rounded-lg cursor-pointer hover:shadow-lg hover:shadow-lime-500/40 bg-lime-500 text-white block"
+            className="lg:px-8 px-4 py-3 h-12.5 max-md:text-[12px] max-sm:h-10 rounded-lg cursor-pointer hover:shadow-lg hover:shadow-lime-500/40 bg-lime-500 text-white block"
           >
             Chat Seller
           </Link>

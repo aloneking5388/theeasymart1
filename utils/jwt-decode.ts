@@ -1,10 +1,19 @@
-// ✅ Safe for middleware.ts
-import { jwtDecode } from "jwt-decode";
+// ✅ Safe for middleware.ts (Edge runtime) — verifies the signature via Web Crypto
+import { jwtVerify } from "jose";
 import { DecodedToken } from "@/types/auth";
 
-export const decodeToken = (token: string): DecodedToken | null => {
+const getSecretKey = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new Error("JWT_SECRET is not configured");
+  return new TextEncoder().encode(secret);
+};
+
+export const decodeToken = async (
+  token: string,
+): Promise<DecodedToken | null> => {
   try {
-    const decoded = jwtDecode(token) as DecodedToken;
+    const { payload } = await jwtVerify(token, getSecretKey());
+    const decoded = payload as unknown as DecodedToken;
 
     if (!decoded.exp || Date.now() > decoded.exp * 1000) {
       console.error("Token expired");
@@ -13,7 +22,7 @@ export const decodeToken = (token: string): DecodedToken | null => {
 
     return decoded;
   } catch (error: any) {
-    console.error("Token decode failed:", error.message);
+    console.error("Token verification failed:", error.message);
     return null;
   }
 };

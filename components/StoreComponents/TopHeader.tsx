@@ -20,11 +20,11 @@ const TopHeader = () => {
   }, [userInfo]);
 
   return (
-    <div className="bg-purple-100 h-[40px] max-md:hidden">
-      <div className="max-w-[1440px] mx-auto px-16 sm:px-5 max-md:px-12 md:px-10">
-        <div className="flex w-full justify-between items-center h-[40px] text-slate-600">
+    <div className="bg-purple-100 h-10 max-md:hidden">
+      <div className="max-w-360 mx-auto px-16 sm:px-5 max-md:px-12 md:px-10">
+        <div className="flex w-full justify-between items-center h-10 text-slate-600">
           <ul className="flex justify-start items-center gap-8">
-            <li className="flex relative justify-center items-center gap-2 text-sm after:absolute after:h-[18px] after:w-[1px] after:bg-[#afafaf] after:-right-[16px]">
+            <li className="flex relative justify-center items-center gap-2 text-sm after:absolute after:h-4.5 after:w-px after:bg-[#afafaf] after:-right-4">
               <span>
                 <GrMail />
               </span>
@@ -50,7 +50,7 @@ const TopHeader = () => {
                   <AiFillGithub />
                 </a>
               </div>
-              <div className="flex group cursor-pointer text-slate-800 text-sm justify-center items-center gap-1 relative after:h-[18px] after:w-[1px] after:bg-[#afafaf] after:-right-[16px] after:absolute before:absolute before:h-[18px] before:bg-[#afafaf] before:w-[1px] before:-left-[20px]">
+              <div className="flex group cursor-pointer text-slate-800 text-sm justify-center items-center gap-1 relative after:h-4.5 after:w-px after:bg-[#afafaf] after:-right-4 after:absolute before:absolute before:h-4.5 before:bg-[#afafaf] before:w-px before:-left-5">
                 <Image
                   src="/images/language.png"
                   alt="language"
@@ -60,7 +60,7 @@ const TopHeader = () => {
                 <span>
                   <MdOutlineKeyboardArrowDown />
                 </span>
-                <ul className="absolute invisible transition-all to-12 rounded-sm duration-200 text-slate-500 p-2 w-[100px] flex flex-col gap-3 group-hover:visible group-hover:top-6 group-hover:bg-purple-200 z-10">
+                <ul className="absolute invisible transition-all to-12 rounded-sm duration-200 text-slate-500 p-2 w-25 flex flex-col gap-3 group-hover:visible group-hover:top-6 group-hover:bg-purple-200 z-10">
                   <li>Hindi</li>
                   <li>English</li>
                 </ul>

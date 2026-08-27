@@ -39,7 +39,7 @@ const UserProfile = () => {
       <div className="flex justify-center items-center py-3">
         <label
           htmlFor="img"
-          className="relative h-[210px] w-[300px] cursor-pointer overflow-hidden"
+          className="relative h-52.5 w-75 cursor-pointer overflow-hidden"
         >
           {userInfo?.profileImage || selectedImage ? (
             <Image
@@ -71,7 +71,7 @@ const UserProfile = () => {
       {/* Profile Info */}
       <div className="px-0 md:px-5 py-2">
         <div className="relative bg-slate-100 p-4 rounded-md text-sm flex flex-col gap-2">
-          <span className="absolute top-2 right-2 bg-yellow-500 text-black p-[6px] rounded cursor-pointer">
+          <span className="absolute top-2 right-2 bg-yellow-500 text-black p-1.5 rounded cursor-pointer">
             <FaEdit />
           </span>
           <div className="flex gap-2">

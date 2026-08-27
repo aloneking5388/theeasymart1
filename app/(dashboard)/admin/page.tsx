@@ -27,7 +27,7 @@ const AdminDashboard = () => {
             <div className="flex flex-col gap-2 pt-6 text-[#d0d2d6]">
               <ol className="m-4 relative rounded-md p-4 border-1 border-slate-600">
                 <li className="ml-6 mb-3">
-                  <div className="flex absolute left-2 w-10 h-10 shadow-lg justify-center  rounded-full items-center p-[6px] z-10 bg-[#00d1e848]">
+                  <div className="flex absolute left-2 w-10 h-10 shadow-lg justify-center  rounded-full items-center p-1.5 z-10 bg-[#00d1e848]">
                     <Image
                       src="/images/seller.png"
                       alt="avatar"
