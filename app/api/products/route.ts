@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     if (!user || user.role !== "seller" || user.status !== "active") {
       return NextResponse.json(
         { error: "Unauthorized seller." },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     if (!shopInfo) {
       return NextResponse.json(
         { error: "Shop information not found." },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     if (!name || isNaN(price) || !category || !brand || isNaN(stock)) {
       return NextResponse.json(
         { error: "Missing or invalid fields." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -67,18 +67,20 @@ export async function POST(req: NextRequest) {
     if (imageFiles.length === 0 && imageUrls.length === 0) {
       return NextResponse.json(
         { error: "At least one image is required." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     for (const file of imageFiles) {
       const buffer = Buffer.from(await file.arrayBuffer());
-      const uploaded = await uploadToCloudinary(buffer) as { secure_url: string };
+      const uploaded = (await uploadToCloudinary(buffer)) as {
+        secure_url: string;
+      };
 
       if (!uploaded?.secure_url) {
         return NextResponse.json(
           { error: "Image upload failed." },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -105,11 +107,11 @@ export async function POST(req: NextRequest) {
     if (images.length === 0) {
       return NextResponse.json(
         { error: "At least one image is required." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Create product in the 
+    // Create product in the
     const slug = generateSlug(name);
     const product = await Product.create({
       name,
@@ -121,7 +123,7 @@ export async function POST(req: NextRequest) {
       discount,
       description,
       images,
-      shopName:shopInfo.shopName,
+      shopName: shopInfo.shopName,
       sellerId: user.id,
       affiliateLink: affiliateLink || undefined,
       costPrice,
@@ -137,7 +139,7 @@ export async function POST(req: NextRequest) {
     console.error("Error adding product:", error);
     return NextResponse.json(
       { error: error.message || "Product adding Failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -175,4 +177,3 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ products: formattedProducts, totalProduct });
 }
-

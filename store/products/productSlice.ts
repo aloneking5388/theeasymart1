@@ -49,7 +49,7 @@ export const addProduct = createAsyncThunk<
   "product/addProduct",
   async (
     formData: FormData,
-    { rejectWithValue, fulfillWithValue, getState }
+    { rejectWithValue, fulfillWithValue, getState },
   ) => {
     const { token, userInfo } = (getState() as RootState).auth;
 
@@ -72,10 +72,10 @@ export const addProduct = createAsyncThunk<
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue(
-        error?.response?.data || { error: "Add Product Error" }
+        error?.response?.data || { error: "Add Product Error" },
       );
     }
-  }
+  },
 );
 
 export const fetchAffiliateProduct = createAsyncThunk<
@@ -95,15 +95,15 @@ export const fetchAffiliateProduct = createAsyncThunk<
       const { data } = await axios.post(
         `/products/fetch-link`,
         { url },
-        config
+        config,
       );
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue(
-        error?.response?.data || { error: "Failed to fetch product details" }
+        error?.response?.data || { error: "Failed to fetch product details" },
       );
     }
-  }
+  },
 );
 
 export const updateProduct = createAsyncThunk<
@@ -114,7 +114,7 @@ export const updateProduct = createAsyncThunk<
   "product/updateProduct",
   async (
     product: UpdatProduct,
-    { rejectWithValue, fulfillWithValue, getState }
+    { rejectWithValue, fulfillWithValue, getState },
   ) => {
     const token = (getState() as RootState).auth.token;
     const config = {
@@ -126,15 +126,15 @@ export const updateProduct = createAsyncThunk<
       const { data } = await axios.post(
         `/products/${product.productId}`,
         product,
-        config
+        config,
       );
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue(
-        error.response.data || { error: "update product failed" }
+        error.response.data || { error: "update product failed" },
       );
     }
-  }
+  },
 );
 
 export const productImageUpdate = createAsyncThunk(
@@ -145,7 +145,7 @@ export const productImageUpdate = createAsyncThunk(
       newImage,
       productId,
     }: { oldImage: File; newImage: File; productId: string },
-    { rejectWithValue, fulfillWithValue, getState }
+    { rejectWithValue, fulfillWithValue, getState },
   ) => {
     const token = (getState() as RootState).auth.token;
     const config = {
@@ -162,15 +162,15 @@ export const productImageUpdate = createAsyncThunk(
       const { data } = await axios.post(
         `/products/image-update`,
         formData,
-        config
+        config,
       );
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue(
-        error?.response?.data || { error: "update product image failed" }
+        error?.response?.data || { error: "update product image failed" },
       );
     }
-  }
+  },
 );
 
 export const deleteProduct = createAsyncThunk<
@@ -193,10 +193,10 @@ export const deleteProduct = createAsyncThunk<
       return fulfillWithValue({ message: data.message, productId });
     } catch (error: any) {
       return rejectWithValue(
-        error?.response?.data || { error: "Failed to delete product" }
+        error?.response?.data || { error: "Failed to delete product" },
       );
     }
-  }
+  },
 );
 
 export const getProducts = createAsyncThunk(
@@ -207,7 +207,7 @@ export const getProducts = createAsyncThunk(
       searchValue,
       parPage,
     }: { page: number; searchValue: string; parPage: number },
-    { rejectWithValue, fulfillWithValue, getState }
+    { rejectWithValue, fulfillWithValue, getState },
   ) => {
     const token = (getState() as RootState).auth.token;
     const config = {
@@ -218,15 +218,15 @@ export const getProducts = createAsyncThunk(
     try {
       const { data } = await axios.get(
         `/products?page=${page}&&searchValue=${searchValue}&&parPage=${parPage}`,
-        config
+        config,
       );
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue(
-        error?.response?.data || { error: "get products failed" }
+        error?.response?.data || { error: "get products failed" },
       );
     }
-  }
+  },
 );
 
 export const getSellerProducts = createAsyncThunk<
@@ -237,7 +237,7 @@ export const getSellerProducts = createAsyncThunk<
   "product/getSellerProducts",
   async (
     { page, parPage, searchValue },
-    { getState, rejectWithValue, fulfillWithValue }
+    { getState, rejectWithValue, fulfillWithValue },
   ) => {
     try {
       const token = getState().auth.token;
@@ -248,17 +248,17 @@ export const getSellerProducts = createAsyncThunk<
       };
       const { data } = await axios.get(
         `/products/sellersProducts?page=${page}&parPage=${parPage}&searchValue=${searchValue}`,
-        config
+        config,
       );
       return fulfillWithValue(data);
     } catch (error: any) {
-     return rejectWithValue(
+      return rejectWithValue(
         error?.response?.data?.error ||
           error?.message ||
-          "Failed to get seller products"
+          "Failed to get seller products",
       );
     }
-  }
+  },
 );
 
 export const price_range_product = createAsyncThunk<
@@ -275,10 +275,10 @@ export const price_range_product = createAsyncThunk<
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue(
-        error?.response?.data || { error: "faild to price range product" }
+        error?.response?.data || { error: "faild to price range product" },
       );
     }
-  }
+  },
 );
 
 export const query_products = createAsyncThunk<
@@ -295,24 +295,24 @@ export const query_products = createAsyncThunk<
           query.high ?? Number.MAX_SAFE_INTEGER
         }&sortPrice=${query.sortPrice ?? ""}&pageNumber=${
           query.pageNumber ?? 1
-        }&searchValue=${query.searchValue ?? ""}`
+        }&searchValue=${query.searchValue ?? ""}`,
       );
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue(
         error?.response?.data?.error ||
           error?.message ||
-          "Failed to get seller products"
+          "Failed to get seller products",
       );
     }
-  }
+  },
 );
 
 export const getProduct = createAsyncThunk(
   "product/getProduct",
   async (
     productId: string,
-    { rejectWithValue, fulfillWithValue, getState }
+    { rejectWithValue, fulfillWithValue, getState },
   ) => {
     const token = (getState() as RootState).auth.token;
     const config = {
@@ -325,10 +325,10 @@ export const getProduct = createAsyncThunk(
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue(
-        error?.response?.data || { error: "failed get product" }
+        error?.response?.data || { error: "failed get product" },
       );
     }
-  }
+  },
 );
 
 export const get_Product = createAsyncThunk<
@@ -343,10 +343,10 @@ export const get_Product = createAsyncThunk<
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue(
-        error?.response?.data || { error: "failed get products" }
+        error?.response?.data || { error: "failed get products" },
       );
     }
-  }
+  },
 );
 
 const productSlice = createSlice({
@@ -372,14 +372,14 @@ const productSlice = createSlice({
         (state, { payload }: PayloadAction<any>) => {
           state.loader = false;
           state.errorMessage = payload?.error || "Failed to add product";
-        }
+        },
       )
       .addCase(
         addProduct.fulfilled,
         (state, { payload }: PayloadAction<any>) => {
           state.loader = false;
           state.successMessage = payload.message;
-        }
+        },
       )
       .addCase(fetchAffiliateProduct.pending, (state) => {
         state.affiliateLoader = true;
@@ -390,7 +390,7 @@ const productSlice = createSlice({
         (state, { payload }: PayloadAction<any>) => {
           state.affiliateLoader = false;
           state.affiliateProduct = payload;
-        }
+        },
       )
       .addCase(
         fetchAffiliateProduct.rejected,
@@ -398,7 +398,7 @@ const productSlice = createSlice({
           state.affiliateLoader = false;
           state.affiliateError =
             payload?.error || "Failed to fetch product details";
-        }
+        },
       )
       .addCase(
         getProducts.fulfilled,
@@ -406,14 +406,14 @@ const productSlice = createSlice({
           state.loader = false;
           state.totalProduct = payload.totalProduct;
           state.products = payload.products;
-        }
+        },
       )
       .addCase(
         getProduct.fulfilled,
         (state, { payload }: PayloadAction<any>) => {
           state.loader = false;
           state.product = payload.product;
-        }
+        },
       )
       .addCase(get_Product.pending, (state) => {
         state.loader = true;
@@ -428,20 +428,20 @@ const productSlice = createSlice({
             product: Product;
             relatedProducts: Product[];
             moreProducts: Product[];
-          }>
+          }>,
         ) => {
           state.loader = false;
           state.product = payload.product;
           state.relatedProducts = payload.relatedProducts;
           state.moreProducts = payload.moreProducts;
-        }
+        },
       )
       .addCase(
         get_Product.rejected,
         (state, { payload }: PayloadAction<any>) => {
           state.loader = false;
           state.errorMessage = payload ?? "failed to get product";
-        }
+        },
       )
       .addCase(price_range_product.pending, (state) => {
         state.loader = true;
@@ -455,19 +455,19 @@ const productSlice = createSlice({
           }: PayloadAction<{
             latest_product: Product[][];
             priceRange: PriceRange;
-          }>
+          }>,
         ) => {
           state.loader = false;
           state.latest_product = payload.latest_product;
           state.priceRange = payload.priceRange;
-        }
+        },
       )
       .addCase(
         price_range_product.rejected,
         (state, { payload }: PayloadAction<any>) => {
           state.loader = false;
           state.errorMessage = payload ?? "failed to get price range product";
-        }
+        },
       )
       .addCase(updateProduct.pending, (state) => {
         state.loader = true;
@@ -477,7 +477,7 @@ const productSlice = createSlice({
         (state, { payload }: PayloadAction<any>) => {
           state.loader = false;
           state.errorMessage = payload?.error || "Failed to update product";
-        }
+        },
       )
       .addCase(
         updateProduct.fulfilled,
@@ -485,7 +485,7 @@ const productSlice = createSlice({
           state.loader = false;
           state.product = payload.product;
           state.successMessage = payload.message;
-        }
+        },
       )
       .addCase(
         productImageUpdate.fulfilled,
@@ -493,7 +493,7 @@ const productSlice = createSlice({
           state.loader = false;
           state.product = payload.product;
           state.successMessage = payload.message;
-        }
+        },
       )
       .addCase(productImageUpdate.pending, (state) => {
         state.loader = true;
@@ -504,7 +504,7 @@ const productSlice = createSlice({
           state.loader = false;
           state.errorMessage =
             payload?.error || "Failed to update product image";
-        }
+        },
       );
     builder
       .addCase(getSellerProducts.pending, (state) => {
@@ -528,7 +528,7 @@ const productSlice = createSlice({
         (state, { payload }: PayloadAction<any>) => {
           state.loader = false;
           state.errorMessage = payload?.error || "Failed to get products";
-        }
+        },
       )
       .addCase(query_products.pending, (state) => {
         state.loader = true;
@@ -544,7 +544,7 @@ const productSlice = createSlice({
         (state, { payload }: PayloadAction<any>) => {
           state.loader = false;
           state.errorMessage = payload?.error ?? "query products failed";
-        }
+        },
       )
       .addCase(deleteProduct.pending, (state) => {
         state.loader = true;
@@ -555,21 +555,22 @@ const productSlice = createSlice({
           state.loader = false;
           state.successMessage = payload.message;
           state.products = state.products.filter(
-            (p) => p.id !== payload.productId
+            (p) => p.id !== payload.productId,
           );
-        }
+        },
       )
       .addCase(
         deleteProduct.rejected,
         (state, { payload }: PayloadAction<any>) => {
           state.loader = false;
           state.errorMessage = payload?.error || "Failed to delete product";
-        }
+        },
       );
   },
 });
 
-export const { productMessageClear, clearAffiliateProduct } = productSlice.actions;
+export const { productMessageClear, clearAffiliateProduct } =
+  productSlice.actions;
 export const selectProducts = (state: RootState) => state.product.products;
 export const selectProductLoading = (state: RootState) => state.product.loader;
 export const selectProductError = (state: RootState) =>

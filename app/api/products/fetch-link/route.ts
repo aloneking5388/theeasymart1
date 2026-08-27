@@ -34,12 +34,18 @@ export async function POST(req: NextRequest) {
     }
     const user = verifyToken(token);
     if (!user || user.role !== "seller" || user.status !== "active") {
-      return NextResponse.json({ error: "Unauthorized seller." }, { status: 403 });
+      return NextResponse.json(
+        { error: "Unauthorized seller." },
+        { status: 403 },
+      );
     }
 
     const { url } = await req.json();
     if (!url || typeof url !== "string") {
-      return NextResponse.json({ error: "Affiliate link is required." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Affiliate link is required." },
+        { status: 400 },
+      );
     }
 
     let parsedUrl: URL;
@@ -64,7 +70,7 @@ export async function POST(req: NextRequest) {
     if (!response.ok) {
       return NextResponse.json(
         { error: "Could not reach the affiliate link." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -77,7 +83,10 @@ export async function POST(req: NextRequest) {
       $(`meta[name="${name}"]`).attr("content") ||
       undefined;
 
-    let name = meta("og:title") || meta("twitter:title") || $("title").first().text().trim();
+    let name =
+      meta("og:title") ||
+      meta("twitter:title") ||
+      $("title").first().text().trim();
     let description =
       meta("og:description") ||
       meta("twitter:description") ||
@@ -86,7 +95,7 @@ export async function POST(req: NextRequest) {
     let price = parsePrice(
       meta("product:price:amount") ||
         meta("og:price:amount") ||
-        meta("twitter:data1")
+        meta("twitter:data1"),
     );
     let currency =
       meta("product:price:currency") || meta("og:price:currency") || null;
@@ -108,15 +117,24 @@ export async function POST(req: NextRequest) {
           const product = item?.["@type"] === "Product" ? item : null;
           if (!product) continue;
           if (!name && product.name) name = product.name;
-          if (!description && product.description) description = product.description;
+          if (!description && product.description)
+            description = product.description;
           if (product.image) {
-            const imgs = Array.isArray(product.image) ? product.image : [product.image];
-            imgs.forEach((img: string) => images.add(resolveUrl(finalUrl, img)));
+            const imgs = Array.isArray(product.image)
+              ? product.image
+              : [product.image];
+            imgs.forEach((img: string) =>
+              images.add(resolveUrl(finalUrl, img)),
+            );
           }
-          const offer = Array.isArray(product.offers) ? product.offers[0] : product.offers;
+          const offer = Array.isArray(product.offers)
+            ? product.offers[0]
+            : product.offers;
           if (offer) {
-            if (price === null && offer.price) price = parsePrice(String(offer.price));
-            if (!currency && offer.priceCurrency) currency = offer.priceCurrency;
+            if (price === null && offer.price)
+              price = parsePrice(String(offer.price));
+            if (!currency && offer.priceCurrency)
+              currency = offer.priceCurrency;
           }
         }
       } catch {
@@ -127,7 +145,7 @@ export async function POST(req: NextRequest) {
     if (!name && images.size === 0 && price === null) {
       return NextResponse.json(
         { error: "Could not extract product details from this link." },
-        { status: 422 }
+        { status: 422 },
       );
     }
 
@@ -144,7 +162,7 @@ export async function POST(req: NextRequest) {
     console.error("Error fetching affiliate link:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch product details." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

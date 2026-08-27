@@ -82,7 +82,7 @@ const ProductSchema = new Schema<IProduct>(
       type: Number,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Full-text index for search with weights
@@ -100,7 +100,7 @@ ProductSchema.index(
       brand: 3,
       description: 2,
     },
-  }
+  },
 );
 
 // Prevent model overwrite on hot reload
