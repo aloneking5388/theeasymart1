@@ -24,6 +24,9 @@ export interface ProductState {
   successMessage: string;
   errorMessage: string;
   loader: boolean;
+  affiliateLoader: boolean;
+  affiliateError: string;
+  affiliateProduct: FetchedAffiliateProduct | null;
   products: Product[];
   latest_product: Product[][];
   topRated_product: Product[][];
@@ -60,6 +63,9 @@ export interface Product {
   updatedAt?: string;
   reviews?: Review[];
   rating?: number;
+  affiliateLink?: string;
+  costPrice?: number;
+  margin?: number;
 }
 
 export interface QueryParams {
@@ -76,4 +82,12 @@ export interface QueryProductsResponse {
   products: Product[];
   totalProduct: number;
   parPage: number;
+}
+
+export interface FetchedAffiliateProduct {
+  name: string;
+  description: string;
+  price: number | null;
+  images: string[];
+  currency: string | null;
 }

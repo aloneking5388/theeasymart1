@@ -45,6 +45,11 @@ export async function POST(req: NextRequest) {
     const stock = parseInt(formData.get("stock") as string);
     const discount = parseFloat(formData.get("discount") as string);
     const description = formData.get("description") as string;
+    const affiliateLink = formData.get("affiliateLink") as string | null;
+    const costPriceRaw = formData.get("costPrice") as string | null;
+    const marginRaw = formData.get("margin") as string | null;
+    const costPrice = costPriceRaw ? parseFloat(costPriceRaw) : undefined;
+    const margin = marginRaw ? parseFloat(marginRaw) : undefined;
 
     // Validate required fields
     if (!name || isNaN(price) || !category || !brand || isNaN(stock)) {
@@ -58,7 +63,8 @@ export async function POST(req: NextRequest) {
 
     // Handle multiple image uploads
     const imageFiles = formData.getAll("images") as File[];
-    if (imageFiles.length === 0) {
+    const imageUrls = formData.getAll("imageUrls") as string[];
+    if (imageFiles.length === 0 && imageUrls.length === 0) {
       return NextResponse.json(
         { error: "At least one image is required." },
         { status: 400 }
@@ -79,6 +85,30 @@ export async function POST(req: NextRequest) {
       images.push(uploaded.secure_url);
     }
 
+    // Re-upload affiliate-fetched images so they aren't hotlinked from the source site
+    for (const url of imageUrls) {
+      try {
+        const fetched = await fetch(url);
+        if (!fetched.ok) continue;
+        const buffer = Buffer.from(await fetched.arrayBuffer());
+        const uploaded = (await uploadToCloudinary(buffer)) as {
+          secure_url: string;
+        };
+        if (uploaded?.secure_url) {
+          images.push(uploaded.secure_url);
+        }
+      } catch (err) {
+        console.error("Failed to import affiliate image:", url, err);
+      }
+    }
+
+    if (images.length === 0) {
+      return NextResponse.json(
+        { error: "At least one image is required." },
+        { status: 400 }
+      );
+    }
+
     // Create product in the 
     const slug = generateSlug(name);
     const product = await Product.create({
@@ -93,6 +123,9 @@ export async function POST(req: NextRequest) {
       images,
       shopName:shopInfo.shopName,
       sellerId: user.id,
+      affiliateLink: affiliateLink || undefined,
+      costPrice,
+      margin,
     });
 
     // Return success response

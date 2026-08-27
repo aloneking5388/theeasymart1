@@ -13,6 +13,9 @@ export interface IProduct extends Document {
   shopName: string;
   images: string[];
   rating?: number;
+  affiliateLink?: string;
+  costPrice?: number;
+  margin?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -68,6 +71,15 @@ const ProductSchema = new Schema<IProduct>(
     rating: {
       type: Number,
       default: 0,
+    },
+    affiliateLink: {
+      type: String,
+    },
+    costPrice: {
+      type: Number,
+    },
+    margin: {
+      type: Number,
     },
   },
   { timestamps: true }

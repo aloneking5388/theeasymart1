@@ -3,6 +3,7 @@ import { RootState } from "../store";
 import axios from "@/utils/axiosInstance";
 import {
   AddProductResponse,
+  FetchedAffiliateProduct,
   PriceRange,
   Product,
   ProductState,
@@ -15,6 +16,9 @@ const initialState: ProductState = {
   successMessage: "",
   errorMessage: "",
   loader: false,
+  affiliateLoader: false,
+  affiliateError: "",
+  affiliateProduct: null,
   products: [],
   latest_product: [],
   topRated_product: [],
@@ -69,6 +73,34 @@ export const addProduct = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue(
         error?.response?.data || { error: "Add Product Error" }
+      );
+    }
+  }
+);
+
+export const fetchAffiliateProduct = createAsyncThunk<
+  FetchedAffiliateProduct,
+  string,
+  { state: RootState }
+>(
+  "product/fetchAffiliateProduct",
+  async (url: string, { rejectWithValue, fulfillWithValue, getState }) => {
+    const token = (getState() as RootState).auth.token;
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+      const { data } = await axios.post(
+        `/products/fetch-link`,
+        { url },
+        config
+      );
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.response?.data || { error: "Failed to fetch product details" }
       );
     }
   }
@@ -325,6 +357,10 @@ const productSlice = createSlice({
       state.successMessage = "";
       state.errorMessage = "";
     },
+    clearAffiliateProduct: (state) => {
+      state.affiliateProduct = null;
+      state.affiliateError = "";
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -343,6 +379,25 @@ const productSlice = createSlice({
         (state, { payload }: PayloadAction<any>) => {
           state.loader = false;
           state.successMessage = payload.message;
+        }
+      )
+      .addCase(fetchAffiliateProduct.pending, (state) => {
+        state.affiliateLoader = true;
+        state.affiliateError = "";
+      })
+      .addCase(
+        fetchAffiliateProduct.fulfilled,
+        (state, { payload }: PayloadAction<any>) => {
+          state.affiliateLoader = false;
+          state.affiliateProduct = payload;
+        }
+      )
+      .addCase(
+        fetchAffiliateProduct.rejected,
+        (state, { payload }: PayloadAction<any>) => {
+          state.affiliateLoader = false;
+          state.affiliateError =
+            payload?.error || "Failed to fetch product details";
         }
       )
       .addCase(
@@ -514,7 +569,7 @@ const productSlice = createSlice({
   },
 });
 
-export const { productMessageClear } = productSlice.actions;
+export const { productMessageClear, clearAffiliateProduct } = productSlice.actions;
 export const selectProducts = (state: RootState) => state.product.products;
 export const selectProductLoading = (state: RootState) => state.product.loader;
 export const selectProductError = (state: RootState) =>
