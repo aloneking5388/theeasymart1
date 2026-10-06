@@ -1,5 +1,6 @@
 "use client";
 
+import { formatProductPrice } from "@/utils/productPresentation";
 import Search from "@/components/DashboardComponents/Search";
 import {
   Table,
@@ -98,9 +99,9 @@ const ProductTable = ({
                 <TableCell>{d.name?.slice(0, 16)}...</TableCell>
                 <TableCell>{d.category}</TableCell>
                 <TableCell>{d.brand}</TableCell>
-                <TableCell>₹ {d.price}</TableCell>
+                <TableCell>{formatProductPrice(d)}</TableCell>
                 <TableCell>{d.discount === 0 ? "No Discount" : `${d.discount}%`}</TableCell>
-                <TableCell>{d.stock}</TableCell>
+                <TableCell>{d.productType === "affiliate" ? "Merchant deal" : d.stock}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <Link

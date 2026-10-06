@@ -1,3 +1,4 @@
+import { publicProduct } from "@/lib/publicProduct";
 import Banner from "@/models/Benners";
 import Category from "@/models/Category";
 import Product from "@/models/Product";
@@ -37,10 +38,10 @@ export async function GET(req: NextRequest) {
       {
         banners,
         categorys: categories,
-        products: newProducts,
-        latest_product: formatProductsInRows(latestList),
-        topRated_product: formatProductsInRows(topRatedList),
-        discount_product: formatProductsInRows(discountList),
+        products: newProducts.map((p) => publicProduct(p.toObject())),
+        latest_product: formatProductsInRows(latestList.map((p) => publicProduct(p.toObject()))),
+        topRated_product: formatProductsInRows(topRatedList.map((p) => publicProduct(p.toObject()))),
+        discount_product: formatProductsInRows(discountList.map((p) => publicProduct(p.toObject()))),
       },
       { status: 200 }
     );

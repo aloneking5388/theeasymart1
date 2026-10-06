@@ -1,5 +1,7 @@
 // app/api/products/[productId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import { Types } from "mongoose";
+import { publicProduct } from "@/lib/publicProduct";
 import Product from "@/models/Product";
 import { connectDB } from "@/utils/ConnectDB";
 import { verifyToken } from "@/lib/auth";
@@ -14,7 +16,10 @@ export async function GET( req: NextRequest ) {
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
-    return NextResponse.json({ product });
+    const token = getTokenFromHeaders(req.headers);
+    const user = token ? verifyToken(token) : null;
+    const ownsProduct = user?.role === "seller" && String(product.sellerId) === user.id;
+    return NextResponse.json({ product: ownsProduct ? product : publicProduct(product.toObject()) });
   } catch (error) {
     return NextResponse.json(
       { error: "Internal Server Error" },
@@ -32,7 +37,7 @@ export async function POST( req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const user = verifyToken(token);
-    if (!user) {
+    if (!user?.id || user.role !== "seller" || user.status !== "active") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const body = await req.json();
@@ -42,11 +47,13 @@ export async function POST( req: NextRequest) {
       return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
     }
 
-    const updatedProduct = await Product.findByIdAndUpdate(
-      productId,
-      { ...body, sellerId: user.id },
-      { new: true }
-    );
+    if (!Types.ObjectId.isValid(productId)) return NextResponse.json({ error: "Invalid product ID." }, { status: 400 });
+    const existing = await Product.findOne({ _id: productId, sellerId: user.id });
+    if (!existing) return NextResponse.json({ error: "Product not found." }, { status: 404 });
+    const fields = existing.productType === "affiliate" ? ["category"] : ["name", "brand", "price", "stock", "discount", "description"];
+    if (existing.productType === "affiliate" && Object.keys(body).some((key) => !["category", "productId"].includes(key))) return NextResponse.json({ error: "Imported affiliate details and the original URL cannot be changed. Only category is editable." }, { status: 400 });
+    const changes = Object.fromEntries(fields.filter((key) => body[key] !== undefined).map((key) => [key, body[key]]));
+    const updatedProduct = await Product.findOneAndUpdate({ _id: productId, sellerId: user.id }, { $set: changes }, { new: true, runValidators: true });
 
     return NextResponse.json({
       message: "Product updated successfully",
@@ -68,7 +75,7 @@ export async function DELETE( req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const user = verifyToken(token);
-    if (!user) {
+    if (!user?.id || user.role !== "seller" || user.status !== "active") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -77,7 +84,9 @@ export async function DELETE( req: NextRequest) {
       return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
     }
 
-    await Product.findByIdAndDelete(productId);
+    if (!Types.ObjectId.isValid(productId)) return NextResponse.json({ error: "Invalid product ID." }, { status: 400 });
+    const deleted = await Product.findOneAndDelete({ _id: productId, sellerId: user.id });
+    if (!deleted) return NextResponse.json({ error: "Product not found." }, { status: 404 });
 
     return NextResponse.json({
       message: "Product deleted successfully",

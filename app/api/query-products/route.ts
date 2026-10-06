@@ -46,6 +46,8 @@ export async function GET(req: NextRequest) {
       .select({
         name: 1,
         price: 1,
+        productType: 1,
+        currency: 1,
         category: 1,
         images: 1,
         rating: 1,

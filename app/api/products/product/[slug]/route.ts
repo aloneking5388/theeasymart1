@@ -1,3 +1,4 @@
+import { publicProduct } from "@/lib/publicProduct";
 import Product from "@/models/Product";
 import { connectDB } from "@/utils/ConnectDB";
 import { NextRequest, NextResponse } from "next/server";
@@ -8,6 +9,8 @@ interface Params {
 }
 
 interface ProductType {
+  productType?: "physical" | "affiliate";
+  currency?: string | null;
   _id: Types.ObjectId | string;
   sellerId: Types.ObjectId | string;
   name: string;
@@ -57,7 +60,7 @@ export async function GET(req: NextRequest) {
     ]);
 
     const formatProduct = (p: ProductType) => ({
-      ...p,
+      ...publicProduct(p),
       id: p._id.toString(),
     });
 

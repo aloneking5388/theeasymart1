@@ -5,12 +5,13 @@ export interface AddProductResponse {
 
 export interface UpdatProduct {
   productId: string;
-  name: string;
-  brand: string;
-  price: number;
-  stock: number;
-  discount: number;
-  description: string;
+  name?: string;
+  brand?: string;
+  price?: number;
+  stock?: number;
+  discount?: number;
+  description?: string;
+  category?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -47,6 +48,8 @@ export interface ProductState {
 }
 
 export interface Product {
+  productType?: "physical" | "affiliate";
+  currency?: string | null;
   id: string;
   slug: string;
   sellerId: string;
@@ -90,4 +93,7 @@ export interface FetchedAffiliateProduct {
   price: number | null;
   images: string[];
   currency: string | null;
+  brand: string;
+  originalAffiliateUrl: string;
+  importToken: string;
 }

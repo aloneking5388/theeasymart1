@@ -1,5 +1,6 @@
 "use client";
 
+import { isAffiliateProduct, formatProductPrice } from "@/utils/productPresentation";
 import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { useEffect, useState } from "react";
@@ -25,6 +26,7 @@ const ProductDetail = () => {
   const [image, setImage] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
   const { product, loader } = useAppSelector((state) => state.product);
+  const isAffiliate = isAffiliateProduct(product);
   const { totalReview } = useAppSelector((state) => state.review);
   const { successMessage, errorMessage } = useAppSelector(
     (state) => state.cart
@@ -58,7 +60,7 @@ const ProductDetail = () => {
   };
 
   const buy = () => {
-    if (!product) return;
+    if (!product || isAffiliate) return;
     if (!userInfo) {
       router.push("/login");
       return;
@@ -100,6 +102,7 @@ const ProductDetail = () => {
   };
 
   const add_card = (_id: string) => {
+    if (isAffiliate) return;
     if (userInfo) {
       dispatch(
         addToCart({
@@ -190,7 +193,7 @@ const ProductDetail = () => {
           <span className="text-green-500">({totalReview} reviews)</span>
         </div>
         <div className="text-2xl max-sm:text-lg max-sm:gap-1 text-red-500 font-bold flex gap-3">
-          {product?.discount !== 0 ? (
+          {isAffiliate && product ? <div><h2>{formatProductPrice(product)}</h2><p className="text-xs font-normal text-slate-500 mt-1">Price may change on merchant site</p></div> : product?.discount !== 0 ? (
             <>
               <h2 className="line-through">
                 ₹ {product?.price}
@@ -205,7 +208,7 @@ const ProductDetail = () => {
           )}
         </div>
         <div className="flex gap-3 pb-10 border-b">
-          {product?.stock ? (
+          {!isAffiliate && product?.stock ? (
             <>
               <div className="flex bg-slate-200 h-12.5 max-sm:h-9.5 rounded-lg justify-center items-center text-xl">
                 <div onClick={dec} className="px-6 max-md:px-3 cursor-pointer">
@@ -246,18 +249,17 @@ const ProductDetail = () => {
           </div>
           <div className="flex flex-col max-md:gap-2 gap-5">
             <span className={`text-${product?.stock ? "green" : "red"}-500`}>
-              {product?.stock ? `In Stock(${product?.stock})` : "Out of Stock"}
+              {isAffiliate ? "Sold and fulfilled by the merchant" : product?.stock ? `In Stock(${product?.stock})` : "Out of Stock"}
             </span>
             <UniversalShareButtons
-              message={`Check out this amazing product: ${
-                product?.name
-              } for ₹ ${product?.price} only!`}
-              url={`https://www.The Easy Mart.com/product/details/${product?.slug}`}
+              message={`Check out ${product?.name}${product ? ` — ${formatProductPrice(product)}` : ""}`}
+              url={`${typeof window !== "undefined" ? window.location.origin : ""}/products/${product?.slug}`}
             />
           </div>
         </div>
         <div className="flex gap-3">
-          {product?.stock ? (
+          {isAffiliate && product && <a href={`/api/affiliate/redirect/${product.id}`} className="rounded-lg px-6 py-3 bg-emerald-500 text-white">View Deal</a>}
+          {!isAffiliate && product?.stock ? (
             <button
               onClick={buy}
               className="lg:px-8 px-4 max-sm:h-10 max-md:text-[12px] rounded-lg py-3 h-12.5 cursor-pointer hover:shadow-lg hover:shadow-emerald-500/40 bg-emerald-500 text-white"

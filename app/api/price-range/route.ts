@@ -1,3 +1,4 @@
+import { publicProduct } from "@/lib/publicProduct";
 import Product from "@/models/Product";
 import { connectDB } from "@/utils/ConnectDB";
 import { NextRequest, NextResponse } from "next/server";
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest) {
     const priceRange = { low: 0, high: 0 };
 
     const products = await Product.find({}).limit(9).sort({ createdAt: -1 });
-    const latest_product = formateProduct(products);
+    const latest_product = formateProduct(products.map((p) => publicProduct(p.toObject())));
 
     const getForPrice = await Product.find({}).sort({ price: 1 });
     if (getForPrice.length > 0) {

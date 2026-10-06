@@ -1,4 +1,5 @@
 "use client";
+import { formatProductPrice, isAffiliateProduct } from "@/utils/productPresentation";
 
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import Link from "next/link";
@@ -9,7 +10,7 @@ import SkeletonProductCarouselItem from "../Skeletons/SkeletonProductCarouselIte
 
 interface ProductsProps {
   title: string;
-  products: { slug: string; images: string[]; name: string; price: number }[][];
+  products: { slug: string; images: string[]; name: string; price: number; productType?: "physical" | "affiliate"; currency?: string | null }[][];
   loader?: boolean; // to show skeletons
 }
 
@@ -55,7 +56,7 @@ const Products = ({ title, products, loader }: ProductsProps) => {
                   <h2 className="text-[14px] font-semibold text-start">
                     {pl.name.slice(0, 40)}...
                   </h2>
-                  <span className="text-xl font-bold">₹ {pl.price}</span>
+                  <span className="text-xl font-bold">{formatProductPrice(pl)}</span>
                 </div>
               </Link>
             </CarouselItem>

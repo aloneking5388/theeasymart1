@@ -14,6 +14,7 @@ import {
   addToWishlist,
   cartMessageClear,
 } from "@/store/cart/cartSlice";
+import { isAffiliateProduct, formatProductPrice } from "@/utils/productPresentation";
 import Rating from "./Retings";
 import SkeletonProductCard from "../Skeletons/SkeletonProductCard";
 
@@ -111,7 +112,7 @@ const DynamicProductList = ({
                     layout === "list" ? "w-[60%] h-45" : ""
                   }`}
                 >
-                  {showDiscount && product.discount > 0 && (
+                  {!isAffiliateProduct(product) && showDiscount && product.discount > 0 && (
                     <span className="absolute top-2 left-2 text-white text-xs font-semibold bg-red-500 rounded-full w-8 h-8 flex items-center justify-center">
                       {product.discount}%
                     </span>
@@ -139,12 +140,12 @@ const DynamicProductList = ({
                     >
                       <FaEye />
                     </Link>
-                    <li
+                    {isAffiliateProduct(product) ? <a href={`/api/affiliate/redirect/${product.id || product._id}`} className="px-3 h-9 bg-emerald-600 text-white rounded-full flex items-center text-xs">View Deal</a> : <li
                       onClick={() => handleAddToCart(product._id)}
                       className="w-9 h-9 bg-white hover:bg-blue-500 text-black hover:text-white rounded-full flex justify-center items-center cursor-pointer transition-transform hover:rotate-[360deg]"
                     >
                       <AiOutlineShoppingCart />
-                    </li>
+                    </li>}
                   </ul>
                   <li
                     onClick={() => handleAddToWishlist(product)}
@@ -161,7 +162,7 @@ const DynamicProductList = ({
                   <div className="flex justify-center items-center gap-2 mt-1">
                     
                     <span className="text-base font-bold text-black">
-                      ₹ {product.price}
+                      {formatProductPrice(product)}
                     </span>
                   </div>
                   <div className="flex justify-center mt-1">
@@ -179,12 +180,12 @@ const DynamicProductList = ({
                     >
                       <FaEye />
                     </Link>
-                    <button
+                    {isAffiliateProduct(product) ? <a href={`/api/affiliate/redirect/${product.id || product._id}`} className="px-2 py-1 bg-emerald-600 text-white rounded text-xs">View Deal</a> : <button
                       onClick={() => handleAddToCart(product._id)}
                       className="w-8 h-8 bg-blue-500 text-white rounded-full flex justify-center items-center mb-1"
                     >
                       <AiOutlineShoppingCart size={18} />
-                    </button>
+                    </button>}
                   </div>
                 </CardContent>
               </Card>

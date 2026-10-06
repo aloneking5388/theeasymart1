@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { getProduct, productImageUpdate, productMessageClear, updateProduct } from "@/store/products/productSlice";
 import { get_category } from "@/store/Categoris/categorySlice";
+import { isAffiliateProduct } from "@/utils/productPresentation";
 import FormInput from "../DashboardComponents/FormInput";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
@@ -47,6 +48,7 @@ const UpdateProduct = () => {
     stock: 0,
   });
 
+  const isAffiliate = isAffiliateProduct(product);
   const inputHandle = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -115,6 +117,7 @@ const UpdateProduct = () => {
 
   const update = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isAffiliate) { dispatch(updateProduct({ productId, category })); return; }
     const obj = {
       name: state.name as string,
       description: state.description as string,
@@ -142,9 +145,11 @@ const UpdateProduct = () => {
   return (
     <div>
       <form onSubmit={update}>
+        {isAffiliate && <p className="text-slate-300 mb-4">Affiliate product: merchant details, images and the original affiliate link are preserved. You can change the EasyMart category.</p>}
         <div className="flex flex-col mb-3 md:flex-row gap-4 w-full text-[#d0d2d6]">
           <div className="flex flex-col w-full gap-1">
             <FormInput
+              readOnly={isAffiliate}
               label="Product Name"
               name="name"
               value={state.name}
@@ -156,6 +161,7 @@ const UpdateProduct = () => {
           </div>
           <div className="flex flex-col w-full gap-1">
             <FormInput
+              readOnly={isAffiliate}
               label="Brand"
               name="brand"
               value={state.brand}
@@ -217,6 +223,7 @@ const UpdateProduct = () => {
           </div>
           <div className="flex flex-col w-full gap-1">
             <FormInput
+              readOnly={isAffiliate}
               label="Stock"
               name="stock"
               value={state.stock}
@@ -231,6 +238,7 @@ const UpdateProduct = () => {
         <div className="flex flex-col mb-3 md:flex-row gap-4 w-full text-[#d0d2d6]">
           <div className="flex flex-col w-full gap-1">
             <FormInput
+              readOnly={isAffiliate}
               label="Price"
               name="price"
               value={state.price}
@@ -242,6 +250,7 @@ const UpdateProduct = () => {
           </div>
           <div className="flex flex-col w-full gap-1">
             <FormInput
+              readOnly={isAffiliate}
               label="Discount"
               name="discount"
               value={state.discount}
@@ -262,7 +271,7 @@ const UpdateProduct = () => {
             onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
             onChange={(newContent) => {}}
             config={{
-              readonly: false,
+              readonly: isAffiliate,
               theme: "dark", // this helps with basic dark mode
               height: 300,
               style: {
@@ -296,6 +305,7 @@ const UpdateProduct = () => {
                       changeImage(img, e.target.files);
                     }
                   }}
+                  disabled={isAffiliate}
                   type="file"
                   id={String(i)}
                   className="hidden"

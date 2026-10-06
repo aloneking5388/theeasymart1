@@ -1,3 +1,4 @@
+import { assertPhysicalProducts } from "@/lib/physicalCheckout";
 import AuthorOrder from "@/models/AuthOrder";
 import CardProduct from "@/models/Card";
 import { CustomerOrder } from "@/models/CustomerOrder";
@@ -17,6 +18,13 @@ export async function POST(req: NextRequest) {
     userId,
     shippingMethodMap,
   } = body;
+
+  try {
+    if (!Array.isArray(products) || products.some((group: any) => !Array.isArray(group.products))) throw new Error("Invalid checkout products.");
+    await assertPhysicalProducts(products.flatMap((group: any) => group.products.map((item: any) => item.productInfo)));
+  } catch (error) {
+    return NextResponse.json({ success: false, message: error instanceof Error ? error.message : "Invalid checkout products." }, { status: 400 });
+  }
 
   let authorOrderData = [];
   let cardId = [];

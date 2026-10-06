@@ -1,3 +1,4 @@
+import { assertPhysicalProducts } from "@/lib/physicalCheckout";
 import crypto from "crypto";
 import AuthorOrder from "@/models/AuthOrder";
 import { CustomerOrder } from "@/models/CustomerOrder";
@@ -205,6 +206,8 @@ export const markOrderPaid = async ({
   if (!order) {
     throw new Error("Order not found");
   }
+
+  await assertPhysicalProducts(order.products);
 
   if (order.payment_status === "paid") {
     return { orderAlreadyPaid: true };

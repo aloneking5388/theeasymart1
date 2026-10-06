@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import type { FetchedAffiliateProduct } from "@/types/product";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import dynamic from "next/dynamic";
@@ -57,16 +58,25 @@ const AddProductForm = () => {
     stock: "",
   });
 
+  const [productType, setProductType] = useState<"physical" | "affiliate">("physical");
+  const [imported, setImported] = useState<FetchedAffiliateProduct | null>(null);
+  const isAffiliate = productType === "affiliate";
   const [affiliateLink, setAffiliateLink] = useState("");
   const [costPrice, setCostPrice] = useState("");
   const [margin, setMargin] = useState("");
   const [affiliateImages, setAffiliateImages] = useState<string[]>([]);
 
   const fetchFromAffiliateLink = () => {
+    if (affiliateLoader || loader) return;
     if (!affiliateLink.trim()) {
       toast.error("Please paste an affiliate product link.");
       return;
     }
+    try {
+      const url = new URL(affiliateLink.trim());
+      if (!["http:", "https:"].includes(url.protocol)) throw new Error();
+    } catch { toast.error("Invalid affiliate URL."); return; }
+    setImported(null);
     dispatch(fetchAffiliateProduct(affiliateLink.trim()));
   };
 
@@ -79,24 +89,23 @@ const AddProductForm = () => {
   };
 
   useEffect(() => {
-    if (affiliateProduct) {
+    if (affiliateProduct && isAffiliate && affiliateProduct.originalAffiliateUrl === affiliateLink.trim()) {
+      setImported(affiliateProduct);
       setState((prev) => ({
         ...prev,
-        name: affiliateProduct.name || prev.name,
+        name: affiliateProduct.name,
+        brand: affiliateProduct.brand || "",
+        price: affiliateProduct.price === null ? "" : String(affiliateProduct.price),
       }));
-      if (affiliateProduct.description) {
-        setContent(affiliateProduct.description);
-      }
+      setContent(affiliateProduct.description);
       if (affiliateProduct.price !== null) {
         setCostPrice(String(affiliateProduct.price));
       }
-      if (affiliateProduct.images.length > 0) {
-        setAffiliateImages(affiliateProduct.images);
-      }
-      toast.success("Product details fetched. Set your margin to finish.");
+      setAffiliateImages(affiliateProduct.images);
+      toast.success("Product information imported. Review it and choose an EasyMart category.");
       dispatch(clearAffiliateProduct());
     }
-  }, [affiliateProduct]);
+  }, [affiliateProduct, isAffiliate, affiliateLink, dispatch]);
 
   useEffect(() => {
     if (affiliateError) {
@@ -106,6 +115,7 @@ const AddProductForm = () => {
   }, [affiliateError]);
 
   useEffect(() => {
+    if (isAffiliate) return;
     const cost = parseFloat(costPrice);
     const marginPercent = parseFloat(margin);
     if (!isNaN(cost) && !isNaN(marginPercent)) {
@@ -114,7 +124,7 @@ const AddProductForm = () => {
     } else if (!isNaN(cost) && margin === "") {
       setState((prev) => ({ ...prev, price: cost.toFixed(2) }));
     }
-  }, [costPrice, margin]);
+  }, [costPrice, margin, isAffiliate]);
 
   const inputHandle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -192,6 +202,8 @@ const AddProductForm = () => {
 
   const add = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (loader || affiliateLoader) return;
+    if (isAffiliate && (!imported || imported.originalAffiliateUrl !== affiliateLink.trim())) { toast.error("Fetch this affiliate product before publishing."); return; }
     if (
       !state.name ||
       !state.price ||
@@ -204,6 +216,8 @@ const AddProductForm = () => {
     }
 
     const formData = new FormData();
+    formData.append("productType", productType);
+    if (isAffiliate && imported) formData.append("importToken", imported.importToken);
     formData.append("name", state.name);
     formData.append("description", content);
     formData.append("price", state.price);
@@ -212,9 +226,9 @@ const AddProductForm = () => {
     formData.append("discount", state.discount);
     formData.append("shopName", userInfo?.shopInfo?.shopName || "");
     formData.append("brand", state.brand);
-    if (affiliateLink) formData.append("affiliateLink", affiliateLink);
-    if (costPrice) formData.append("costPrice", costPrice);
-    if (margin) formData.append("margin", margin);
+    if (isAffiliate && imported) formData.append("affiliateLink", imported.originalAffiliateUrl);
+    if (!isAffiliate && costPrice) formData.append("costPrice", costPrice);
+    if (!isAffiliate && margin) formData.append("margin", margin);
     images.forEach((img) => {
       formData.append("images", img);
     });
@@ -245,6 +259,7 @@ const AddProductForm = () => {
       setImages([]);
       setAffiliateImages([]);
       setAffiliateLink("");
+      setImported(null);
       setCostPrice("");
       setMargin("");
       setCategory("");
@@ -254,6 +269,23 @@ const AddProductForm = () => {
   return (
     <div>
       <form onSubmit={add}>
+        <fieldset disabled={affiliateLoader || loader} className="mb-5 text-[#d0d2d6]">
+          <legend className="mb-2 font-semibold">Product Type</legend>
+          <div className="flex gap-5">
+            {(["physical", "affiliate"] as const).map((type) => (
+              <label key={type} className="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="productType" checked={productType === type} onChange={() => {
+                  setProductType(type); setImported(null); setAffiliateImages([]);
+                  setAffiliateLink(""); setCostPrice(""); setMargin(""); setContent("");
+                  setImages([]); setImageShow([]);
+                  setState({ name: "", description: "", discount: "", price: "", brand: "", stock: "" });
+                }} />
+                {type === "physical" ? "Physical Product" : "Affiliate Product"}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        {isAffiliate && <>
         <div className="flex flex-col mb-3 md:flex-row gap-4 w-full text-[#d0d2d6]">
           <div className="flex flex-col w-full gap-1">
             <Label htmlFor="affiliateLink">Affiliate Link</Label>
@@ -261,8 +293,9 @@ const AddProductForm = () => {
               <Input
                 id="affiliateLink"
                 value={affiliateLink}
-                onChange={(e) => setAffiliateLink(e.target.value)}
-                placeholder="Paste product link (e.g. AliExpress, Amazon)"
+                disabled={affiliateLoader}
+                onChange={(e) => { setAffiliateLink(e.target.value); setImported(null); setAffiliateImages([]); setContent(""); setState((prev) => ({ ...prev, name: "", brand: "", price: "" })); }}
+                placeholder="Paste your original merchant affiliate link"
                 className="px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]"
               />
               <Button
@@ -272,17 +305,21 @@ const AddProductForm = () => {
                 className="bg-indigo-500 hover:shadow-indigo-500/20 hover:shadow-lg text-white rounded-md px-5 whitespace-nowrap"
               >
                 {affiliateLoader ? (
-                  <Loader2 className="animate-spin" />
+                  <><Loader2 className="animate-spin" /> Fetching product...</>
                 ) : (
-                  "Fetch Details"
+                  "Fetch Product"
                 )}
               </Button>
             </div>
           </div>
         </div>
+        <p className="text-sm text-slate-300 mb-4">The merchant handles payment and delivery. Automatic import depends on the metadata the website provides.</p>
+        {imported && <p role="status" className="text-sm text-slate-300 mb-4">{!imported.description || imported.price === null || !imported.images.length || !imported.brand ? "Some merchant details are unavailable. Fill in missing required fields; imported fields are locked." : "Merchant details imported and locked."} Currency: {imported.currency || "Not provided"}.</p>}
+        </>}
         <div className="flex flex-col mb-3 md:flex-row gap-4 w-full text-[#d0d2d6]">
           <div className="flex flex-col w-full gap-1">
             <FormInput
+              readOnly={isAffiliate && !!imported?.name}
               label="Product Name"
               id="name"
               name="name"
@@ -293,6 +330,7 @@ const AddProductForm = () => {
           </div>
           <div className="flex flex-col w-full gap-1">
             <FormInput
+              readOnly={isAffiliate && !!imported?.brand}
               label="Product brand"
               id="brand"
               value={state.brand}
@@ -352,6 +390,7 @@ const AddProductForm = () => {
           </div>
           <div className="flex flex-col w-full gap-1">
             <FormInput
+              disabled={isAffiliate}
               label="Stock"
               id="stock"
               value={state.stock}
@@ -364,10 +403,10 @@ const AddProductForm = () => {
           </div>
         </div>
 
-        <div className="flex flex-col mb-3 md:flex-row gap-4 w-full text-[#d0d2d6]">
+        {!isAffiliate && <div className="flex flex-col mb-3 md:flex-row gap-4 w-full text-[#d0d2d6]">
           <div className="flex flex-col w-full gap-1">
             <FormInput
-              label="Cost Price (from affiliate link)"
+              label="Cost Price"
               id="costPrice"
               value={costPrice}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -389,12 +428,13 @@ const AddProductForm = () => {
               placeholder="e.g. 20"
             />
           </div>
-        </div>
+        </div>}
 
         <div className="flex flex-col mb-3 md:flex-row gap-4 w-full text-[#d0d2d6]">
           <div className="flex flex-col w-full gap-1">
             <FormInput
-              label="Price"
+              readOnly={isAffiliate && imported?.price != null}
+              label={isAffiliate ? "Merchant Price (informational)" : "Price"}
               id="price"
               name="price"
               value={state.price}
@@ -405,6 +445,7 @@ const AddProductForm = () => {
           </div>
           <div className="flex flex-col w-full gap-1">
             <FormInput
+              disabled={isAffiliate}
               label="Discount"
               id="discount"
               name="discount"
@@ -418,14 +459,14 @@ const AddProductForm = () => {
         </div>
         <div className="flex flex-col w-full gap-1 text-[#d0d2d6] mb-5">
           <Label htmlFor="description">Description</Label>
-          <JoditEditor
+          {isAffiliate ? <textarea id="description" value={content} readOnly={!!imported?.description} onChange={(event) => setContent(event.target.value)} className="w-full min-h-48 rounded-md bg-[#283046] border border-slate-700 px-4 py-3" placeholder="Description unavailable from merchant. Enter the missing description." /> : <JoditEditor
             ref={editor}
             value={content}
             tabIndex={1}
             onBlur={(newContent) => setContent(newContent)}
             onChange={(newContent) => {}}
             config={{
-              readonly: false,
+              readonly: isAffiliate && !!imported?.description,
               theme: "dark", // this helps with basic dark mode
               height: 300,
               style: {
@@ -436,9 +477,9 @@ const AddProductForm = () => {
                 padding: "8px",
               },
             }}
-          />
+          />}
         </div>
-        <div className="grid lg:grid-cols-4 grid-cols-1 md:grid-cols-3 sm:grid-cols-2 sm:gap-4 md:gap-4 xs:gap-4 gap-3 w-full text-[#d0d2d6] mb-4">
+        {(!isAffiliate || !imported?.images.length) && <div className="grid lg:grid-cols-4 grid-cols-1 md:grid-cols-3 sm:grid-cols-2 sm:gap-4 md:gap-4 xs:gap-4 gap-3 w-full text-[#d0d2d6] mb-4">
           {imageShow.map((img, i) => (
             <div key={i} className="w-full h-45 relative">
               <Label htmlFor={String(i)}>
@@ -480,7 +521,7 @@ const AddProductForm = () => {
             type="file"
             id="image"
           />
-        </div>
+        </div>}
         {affiliateImages.length > 0 && (
           <div className="mb-4">
             <Label>Images fetched from affiliate link</Label>
@@ -495,6 +536,7 @@ const AddProductForm = () => {
                   />
                   <button
                     type="button"
+                    disabled={isAffiliate}
                     onClick={() => removeAffiliateImage(i)}
                     className="p-2 z-10 cursor-pointer bg-slate-700 hover:shadow-lg hover:shadow-slate-400/50 text-white absolute top-1 right-1 rounded-full"
                   >
@@ -507,10 +549,10 @@ const AddProductForm = () => {
         )}
         <div className="flex">
           <Button
-            disabled={loader ? true : false}
+            disabled={loader || affiliateLoader || (isAffiliate && !imported)}
             className="bg-blue-500 w-47.5 hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3"
           >
-            {loader ? <Loader2 className="animate-spin" /> : "Add product"}
+            {loader ? <Loader2 className="animate-spin" /> : isAffiliate ? "Publish Affiliate Product" : "Add product"}
           </Button>
         </div>
       </form>

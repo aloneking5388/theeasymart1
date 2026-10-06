@@ -60,6 +60,7 @@ export interface CartProduct {
   quantity: number;
   products: Product[];
   productInfo: {
+    productType?: "physical" | "affiliate";
     name: string;
     brand: string;
     price: number;

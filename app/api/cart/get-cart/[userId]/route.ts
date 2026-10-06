@@ -1,3 +1,4 @@
+import { publicProduct } from "@/lib/publicProduct";
 import CardProduct from "@/models/Card";
 import { connectDB } from "@/utils/ConnectDB";
 import { NextRequest, NextResponse } from "next/server";
@@ -26,11 +27,13 @@ export async function GET(req: NextRequest) {
       },
     ]);
 
+    const physicalItems = cartItems.filter((item: any) => item.products[0]?.productType !== "affiliate");
+    physicalItems.forEach((item: any) => { item.products = item.products.map(publicProduct); });
     let buyProductItem = 0;
     let calculatedPrice = 0;
     let cardProductCount = 0;
 
-    const outOfStockProduct = cartItems.filter(
+    const outOfStockProduct = physicalItems.filter(
       (p) => p.products[0]?.stock < p.quantity
     );
 
@@ -38,7 +41,7 @@ export async function GET(req: NextRequest) {
       cardProductCount += item.quantity;
     }
 
-    const stockProduct = cartItems.filter(
+    const stockProduct = physicalItems.filter(
       (p) => p.products[0]?.stock >= p.quantity
     );
 

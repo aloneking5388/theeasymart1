@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   const user = await verifyToken(token);
 
-  if (!user || user.role !== "seller") {
+  if (!user?.id || user.role !== "seller" || user.status !== "active") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -28,10 +28,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid data" }, { status: 400 });
   }
 
-  const product = await Product.findById(productId);
+  const product = await Product.findOne({ _id: productId, sellerId: user.id });
   if (!product) {
     return NextResponse.json({ error: "Product not found" }, { status: 404 });
   }
+
+  if (product.productType === "affiliate") return NextResponse.json({ error: "Imported affiliate images cannot be changed." }, { status: 400 });
 
   await deleteFromCloudinary(product.images[0]);
   const imageUpload = await uploadToCloudinary(newImage);

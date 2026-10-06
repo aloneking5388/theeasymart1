@@ -1,4 +1,5 @@
 "use client";
+import { formatProductPrice, isAffiliateProduct } from "@/utils/productPresentation";
 
 import { useState } from "react";
 import Reviews from "./Reviews";
@@ -45,11 +46,7 @@ const FromShop = () => {
               <Reviews product={product} />
             ) : (
               <div className="py-5 text-slate-600">
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: product?.description || "",
-                  }}
-                />
+                {isAffiliateProduct(product) ? <p className="whitespace-pre-wrap">{product?.description}</p> : <div dangerouslySetInnerHTML={{ __html: product?.description || "" }} />}
               </div>
             )}
           </div>
@@ -79,7 +76,7 @@ const FromShop = () => {
                         width={150}
                         height={150}
                       />
-                      {p.discount !== 0 && (
+                      {!isAffiliateProduct(p) && p.discount !== 0 && (
                         <div className="flex justify-center items-center absolute text-white w-9.5 h-9.5 rounded-full bg-red-500 font-semibold text-xs left-2 top-2">
                           {p.discount}%
                         </div>
@@ -91,7 +88,7 @@ const FromShop = () => {
                     <div className="flex gap-2">
                       <h2 className="text-slate-600">Price: </h2>
                       <span className="text-sm font-semibold">
-                        ₹ {p.price}
+                        {formatProductPrice(p)}
                       </span>
                     </div>
                     <div className="flex gap-2">

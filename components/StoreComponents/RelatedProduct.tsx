@@ -1,4 +1,5 @@
 "use client";
+import { formatProductPrice, isAffiliateProduct } from "@/utils/productPresentation";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -54,7 +55,7 @@ const RelatedProduct = () => {
                             className="rounded object-cover"
                           />
                           <div className="absolute rounded-md h-50 w-50 top-0 left-0 opacity-25 hover:opacity-50 transition-all duration-500"></div>
-                          {p.discount !== 0 && (
+                          {!isAffiliateProduct(p) && p.discount !== 0 && (
                             <div className="flex justify-center items-center absolute text-white w-9.5 h-9.5 rounded-full bg-red-500 font-semibold text-xs left-2 top-2">
                               {p.discount}%
                             </div>
@@ -66,7 +67,7 @@ const RelatedProduct = () => {
                           </h2>
                           <div className="flex flex-col justify-start items-start gap-3">
                             <h2 className="text-[#6699ff]  text-lg font-bold">
-                              ₹ {p.price}
+                              {formatProductPrice(p)}
                             </h2>
                             <div className="flex">
                               <Rating

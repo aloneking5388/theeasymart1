@@ -4,6 +4,9 @@ import { connectDB } from "@/utils/ConnectDB";
 import { verifyToken } from "@/lib/auth";
 import { uploadToCloudinary } from "@/lib/cloudinary"; // Assuming you have a utility function for Cloudinary upload
 import { generateSlug } from "@/utils/generateSlug";
+import { verifyAffiliateImport } from "@/lib/affiliateImport";
+import { safeRemoteFetch, validatePublicUrl } from "@/lib/safeRemote";
+import { publicProduct } from "@/lib/publicProduct";
 import Seller from "@/models/Seller";
 import { getTokenFromHeaders } from "@/utils/getToken";
 
@@ -19,14 +22,15 @@ export async function POST(req: NextRequest) {
 
     // Verify token and check user role/status
     const user = verifyToken(token);
-    if (!user || user.role !== "seller" || user.status !== "active") {
+    if (!user?.id || user.role !== "seller" || user.status !== "active") {
       return NextResponse.json(
         { error: "Unauthorized seller." },
         { status: 403 },
       );
     }
 
-    const { shopInfo } = await Seller.findById(user.id);
+    const seller = await Seller.findById(user.id);
+    const shopInfo = seller?.shopInfo;
 
     if (!shopInfo) {
       return NextResponse.json(
@@ -38,18 +42,41 @@ export async function POST(req: NextRequest) {
     // Parse form data
     const formData = await req.formData();
 
-    const name = formData.get("name") as string;
-    const price = parseFloat(formData.get("price") as string);
+    const productType = formData.get("productType") || "physical";
+    if (productType !== "physical" && productType !== "affiliate") return NextResponse.json({ error: "Invalid product type." }, { status: 400 });
+    const isAffiliate = productType === "affiliate";
+    let currency: string | null = null;
+    let name = formData.get("name") as string;
+    let price = parseFloat(formData.get("price") as string);
     const category = formData.get("category") as string;
-    const brand = formData.get("brand") as string;
-    const stock = parseInt(formData.get("stock") as string);
-    const discount = parseFloat(formData.get("discount") as string);
-    const description = formData.get("description") as string;
+    let brand = formData.get("brand") as string;
+    let stock = parseInt(formData.get("stock") as string);
+    let discount = parseFloat(formData.get("discount") as string);
+    let description = formData.get("description") as string;
     const affiliateLink = formData.get("affiliateLink") as string | null;
     const costPriceRaw = formData.get("costPrice") as string | null;
     const marginRaw = formData.get("margin") as string | null;
     const costPrice = costPriceRaw ? parseFloat(costPriceRaw) : undefined;
     const margin = marginRaw ? parseFloat(marginRaw) : undefined;
+
+    let importedImages: string[] | null = null;
+    if (isAffiliate) {
+      try {
+        if (!affiliateLink || typeof affiliateLink !== "string") throw new Error();
+        await validatePublicUrl(affiliateLink);
+        const receipt = verifyAffiliateImport(String(formData.get("importToken") || ""), user.id, affiliateLink);
+        name = receipt.name || name;
+        description = receipt.description || description;
+        price = receipt.price ?? price;
+        brand = receipt.brand || brand;
+        currency = receipt.currency;
+        importedImages = receipt.images.length ? receipt.images : null;
+        stock = 0; discount = 0;
+      } catch {
+        return NextResponse.json({ error: "Fetch this affiliate URL again before publishing. The import may have expired or the URL is invalid." }, { status: 400 });
+      }
+      if (!description || !Number.isFinite(price) || price < 0) return NextResponse.json({ error: "The merchant returned incomplete information. Supply the missing description and price." }, { status: 400 });
+    }
 
     // Validate required fields
     if (!name || isNaN(price) || !category || !brand || isNaN(stock)) {
@@ -62,8 +89,8 @@ export async function POST(req: NextRequest) {
     const images: string[] = [];
 
     // Handle multiple image uploads
-    const imageFiles = formData.getAll("images") as File[];
-    const imageUrls = formData.getAll("imageUrls") as string[];
+    const imageFiles = importedImages ? [] : formData.getAll("images") as File[];
+    const imageUrls = importedImages ?? formData.getAll("imageUrls") as string[];
     if (imageFiles.length === 0 && imageUrls.length === 0) {
       return NextResponse.json(
         { error: "At least one image is required." },
@@ -90,9 +117,8 @@ export async function POST(req: NextRequest) {
     // Re-upload affiliate-fetched images so they aren't hotlinked from the source site
     for (const url of imageUrls) {
       try {
-        const fetched = await fetch(url);
-        if (!fetched.ok) continue;
-        const buffer = Buffer.from(await fetched.arrayBuffer());
+        const fetched = await safeRemoteFetch(url, { kind: "image" });
+        const buffer = fetched.body;
         const uploaded = (await uploadToCloudinary(buffer)) as {
           secure_url: string;
         };
@@ -114,6 +140,8 @@ export async function POST(req: NextRequest) {
     // Create product in the
     const slug = generateSlug(name);
     const product = await Product.create({
+      productType,
+      currency: isAffiliate ? currency : undefined,
       name,
       slug,
       price,
@@ -126,8 +154,8 @@ export async function POST(req: NextRequest) {
       shopName: shopInfo.shopName,
       sellerId: user.id,
       affiliateLink: affiliateLink || undefined,
-      costPrice,
-      margin,
+      costPrice: isAffiliate ? undefined : costPrice,
+      margin: isAffiliate ? undefined : margin,
     });
 
     // Return success response
@@ -138,7 +166,7 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error("Error adding product:", error);
     return NextResponse.json(
-      { error: error.message || "Product adding Failed" },
+      { error: "Product could not be saved. Check the required fields and try again." },
       { status: 500 },
     );
   }
@@ -171,7 +199,7 @@ export async function GET(req: NextRequest) {
     .limit(perPage);
 
   const formattedProducts = products.map((product) => ({
-    ...product.toObject(),
+    ...publicProduct(product.toObject()),
     id: product._id.toString(),
   }));
 

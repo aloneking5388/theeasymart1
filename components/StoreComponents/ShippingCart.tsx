@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { isAffiliateProduct } from "@/utils/productPresentation";
 import ShippingForm from "./ShippingForm";
 import { CartGroup, CartProduct } from "@/types/cart";
 import {
@@ -37,6 +38,7 @@ const ShippingCart = () => {
   );
   const { loader } = useAppSelector((state) => state.order);
 
+  const hasAffiliate = products.some((group: CartGroup) => group.products.some((item: CartProduct) => isAffiliateProduct(item.productInfo)));
   const isFormComplete = Object.values(shippingInfo).every(
     (value) => value.trim() !== "",
   );
@@ -77,6 +79,7 @@ const ShippingCart = () => {
   );
 
   const handlePlaceOrder = () => {
+    if (hasAffiliate) { toast.error("Affiliate products must be purchased through View Deal."); return; }
     if (!userInfo?.id) {
       toast.error("Please login to place an order");
       return;
@@ -112,6 +115,8 @@ const ShippingCart = () => {
         ),
       );
   };
+
+  if (hasAffiliate) return <p role="alert" className="p-8">Affiliate products cannot be shipped or checked out on EasyMart. Open the product and choose View Deal.</p>;
 
   return (
     <section className="bg-[#eeeeee]">

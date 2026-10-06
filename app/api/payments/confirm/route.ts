@@ -1,3 +1,4 @@
+import { assertPhysicalProducts } from "@/lib/physicalCheckout";
 import { CustomerOrder } from "@/models/CustomerOrder";
 import { connectDB } from "@/utils/ConnectDB";
 import { getTokenFromHeaders } from "@/utils/getToken";
@@ -75,6 +76,9 @@ export async function POST(req: NextRequest) {
     if (!order) {
       return NextResponse.json({ message: "Order not found" }, { status: 404 });
     }
+
+    try { await assertPhysicalProducts(order.products); }
+    catch (error) { return NextResponse.json({ success: false, message: error instanceof Error ? error.message : "Invalid checkout products." }, { status: 400 }); }
 
     const normalizedWalletAmount = Math.min(
       Math.max(0, Number(walletAmount) || 0),

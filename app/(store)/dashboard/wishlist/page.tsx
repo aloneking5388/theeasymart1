@@ -1,4 +1,5 @@
 "use client";
+import { isAffiliateProduct, formatProductPrice } from "@/utils/productPresentation";
 
 import Rating from "@/components/StoreComponents/Retings";
 import { cartMessageClear, deleteWishlistItem, getWishlistItems } from "@/store/cart/cartSlice";
@@ -39,7 +40,7 @@ const WishlistPage = () => {
           className="flex flex-col justify-center items-center border rounded-md group transition-all duration-500 hover:shadow-md hover:-mt-3 bg-white"
         >
           <div className="relative overflow-hidden">
-            {p.discount !== 0 && (
+            {!isAffiliateProduct(p) && p.discount !== 0 && (
               <div className="flex justify-center items-center absolute text-white w-9.5 h-9.5 rounded-full bg-red-500 font-semibold text-xs left-2 top-2">
                 {p.discount}%
               </div>
@@ -60,20 +61,20 @@ const WishlistPage = () => {
                 <AiFillDelete />
               </li>
               <Link
-                href={`/product/details/${p.slug}`}
+                href={isAffiliateProduct(p) ? `/products/${p.slug}` : `/product/details/${p.slug}`}
                 className="w-9.5 h-9.5 max-sm:w-7 max-sm:h-7 max-sm:text-[10px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#7fad39] hover:text-white hover:rotate-[720deg] transition-all"
               >
                 <FaEye />
               </Link>
-              <li className="w-9.5 h-9.5 max-sm:w-7 max-sm:h-7 max-sm:text-[10px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#7fad39] hover:text-white hover:rotate-[720deg] transition-all">
+              {isAffiliateProduct(p) ? <li><a href={`/api/affiliate/redirect/${p.productId}`} className="bg-emerald-600 text-white rounded px-3 py-2 text-xs">View Deal</a></li> : <li className="w-9.5 h-9.5 max-sm:w-7 max-sm:h-7 max-sm:text-[10px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#7fad39] hover:text-white hover:rotate-[720deg] transition-all">
                 <AiOutlineShoppingCart />
-              </li>
+              </li>}
             </ul>
           </div>
           <div className="py-3 text-slate-600 px-2">
             <h2>{p.name}</h2>
             <div className="flex justify-start items-center gap-3">
-              <span className="text-lg  font-bold">₹ {p.price}k</span>
+              <span className="text-lg  font-bold">{isAffiliateProduct(p) ? formatProductPrice(p) : `₹ ${p.price}k`}</span>
               <div className="flex">
                 <Rating size="small" type="precise" rating={p.rating} />
               </div>

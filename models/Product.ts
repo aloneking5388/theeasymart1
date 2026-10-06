@@ -1,6 +1,8 @@
 import mongoose, { Document, Schema, model, models } from "mongoose";
 
 export interface IProduct extends Document {
+  productType?: "physical" | "affiliate";
+  currency?: string;
   sellerId: Schema.Types.ObjectId;
   name: string;
   slug: string;
@@ -22,6 +24,8 @@ export interface IProduct extends Document {
 
 const ProductSchema = new Schema<IProduct>(
   {
+    productType: { type: String, enum: ["physical", "affiliate"], default: "physical" },
+    currency: { type: String },
     sellerId: {
       type: Schema.Types.ObjectId,
       required: true,
