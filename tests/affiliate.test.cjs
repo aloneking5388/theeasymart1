@@ -378,3 +378,66 @@ test('fetch API returns useful errors without disclosing transport exceptions', 
   const response = await route.POST(request('/api/products/fetch-link', { url: merchantUrl })); const data = await response.json();
   assert.equal(response.status, 422); assert.equal(data.success, false); assert.equal(data.code, 'PRODUCT_FETCH_UNAVAILABLE'); assert(!JSON.stringify(data).includes('private host'));
 });
+
+const providers = load('lib/affiliateProvider.ts');
+test('Amazon matching accepts marketplaces and short links, rejects lookalikes',()=>{
+ for(const host of ['amazon.com','www.amazon.in','amazon.co.uk','amazon.ae','amazon.de','amazon.ca','amazon.com.au','amazon.co.jp','amzn.to','a.co']) assert.equal(providers.affiliateProvider('https://'+host),'amazon');
+ for(const host of ['fakeamazon.com','amazon.example.com.attacker.com','amazon.com.attacker.com']) assert.equal(providers.affiliateProvider('https://'+host),'other');
+});
+test('fallback authorization binds seller and original URL; cannot masquerade as import receipt',()=>{
+ const token=receipt.signAffiliateFallback(sellerId,merchantUrl);receipt.verifyAffiliateFallback(token,sellerId,merchantUrl);
+ assert.throws(()=>receipt.verifyAffiliateFallback(token,'other',merchantUrl));assert.throws(()=>receipt.verifyAffiliateFallback(token,sellerId,merchantUrl+'&changed=1'));assert.throws(()=>receipt.verifyAffiliateImport(token,sellerId,merchantUrl));
+ assert.throws(()=>receipt.verifyAffiliateFallback(receipt.signAffiliateImport({...details,sellerId,originalAffiliateUrl:merchantUrl}),sellerId,merchantUrl));
+ const expired=require('jsonwebtoken').sign({sellerId,originalAffiliateUrl:merchantUrl},process.env.JWT_SECRET,{audience:'affiliate-manual-fallback',expiresIn:-1});assert.throws(()=>receipt.verifyAffiliateFallback(expired,sellerId,merchantUrl));
+});
+test('validated merchant response limitations permit fallback; redirects and timeouts do not',async()=>{
+ for(const response of [{status:403},{headers:{'content-type':'application/json'}},{headers:{'content-type':'text/html','content-encoding':'gzip'}}]){const {safe}=remoteFixture([response]);await assert.rejects(safe.safeRemoteFetch(merchantUrl,{kind:'html'}),e=>e.manualFallbackAllowed===true);}
+ for(const response of [{status:302,headers:{location:'http://127.0.0.1'}},{status:302,headers:{}},{slow:true}]){const {safe}=remoteFixture([response]);await assert.rejects(safe.safeRemoteFetch(merchantUrl,{kind:'html',timeoutMs:20}),e=>e.manualFallbackAllowed===false);}
+});
+test('Amazon interstitial authorizes fallback; compatible metadata still signs automatic import',async()=>{
+ const url='https://www.amazon.com/dp/B012345678?tag=original-20';
+ for(const body of ['<title>Continue shopping</title>',html]){
+ const route=loader({...authMocks,'@/lib/safeRemote':{safeRemoteFetch:async()=>({body:Buffer.from(body),finalUrl:url}),RemoteFetchError:security.RemoteFetchError}})('app/api/products/fetch-link/route.ts');
+ const response=await route.POST(request('/api/products/fetch-link',{url}));const data=await response.json();
+ if(body===html){assert.equal(response.status,200);receipt.verifyAffiliateImport(data.importToken,sellerId,url);assert.equal(data.fallbackToken,undefined);}
+ else{assert.equal(response.status,422);assert.equal(data.code,'PRODUCT_FETCH_UNAVAILABLE');assert.equal(data.provider,'amazon');assert.equal(data.originalAffiliateUrl,url);receipt.verifyAffiliateFallback(data.fallbackToken,sellerId,url);assert.equal(data.importToken,undefined);}}
+});
+test('security, timeout and unspecified network failures never issue fallback authorization',async()=>{
+ for(const code of ['INVALID_AFFILIATE_URL','PRODUCT_FETCH_TIMEOUT','PRODUCT_FETCH_UNAVAILABLE']){const route=loader({...authMocks,'@/lib/safeRemote':{safeRemoteFetch:async()=>{throw new security.RemoteFetchError(code,'Rejected');},RemoteFetchError:security.RemoteFetchError}})('app/api/products/fetch-link/route.ts');const data=await(await route.POST(request('/api/products/fetch-link',{url:merchantUrl}))).json();assert.equal(data.fallbackToken,undefined);}
+});
+function manualForm(){const form=new FormData();for(const [key,value] of Object.entries({productType:'affiliate',affiliateMode:'manual',affiliateLink:merchantUrl,fallbackToken:receipt.signAffiliateFallback(sellerId,merchantUrl),name:'Seller camera',description:'Seller description',brand:'',price:'20',currency:'usd',category:'Cameras',stock:'12',discount:'25',costPrice:'100',margin:'200'}))form.append(key,value);form.append('images',new Blob(['image'],{type:'image/jpeg'}),'camera.jpg');return form;}
+test('manual publish uses seller details and uploads, preserves link, omits costs and margin',async()=>{
+ let saved;const route=loader({...authMocks,'@/models/Seller':{findById:async()=>({shopInfo:{shopName:'Shop'}})},'@/models/Product':{create:async data=>(saved=data)},'@/lib/cloudinary':{uploadToCloudinary:async()=>({secure_url:'https://res.cloudinary.com/manual.jpg'})},'@/lib/safeRemote':{validatePublicUrl:async url=>assert.equal(url,merchantUrl)}})('app/api/products/route.ts');
+ assert.equal((await route.POST(request('/api/products',manualForm()))).status,200);assert.equal(saved.productType,'affiliate');assert.equal(saved.affiliateLink,merchantUrl);assert.equal(saved.name,'Seller camera');assert.equal(saved.currency,'USD');assert.equal(saved.price,20);assert.equal(saved.stock,0);assert.equal(saved.discount,0);assert.equal(saved.costPrice,undefined);assert.equal(saved.margin,undefined);assert.deepEqual(saved.images,['https://res.cloudinary.com/manual.jpg']);
+});
+test('manual publish rejects changed or private URL, missing token, bad currency and remote image workaround',async()=>{
+ let writes=0;const route=loader({...authMocks,'@/models/Seller':{findById:async()=>({shopInfo:{shopName:'Shop'}})},'@/models/Product':{create:async()=>writes++},'@/lib/cloudinary':{uploadToCloudinary:async()=>writes++},'@/lib/safeRemote':{validatePublicUrl:async url=>security.parsePublicUrl(url)}})('app/api/products/route.ts');
+ for(const [key,value] of [['affiliateLink',merchantUrl+'&changed=1'],['affiliateLink','http://localhost'],['affiliateLink','http://10.0.0.1'],['fallbackToken',''],['currency','INVALID'],['price','20garbage'],['name','   '],['description','   '],['imageUrls','https://amazon.com/image.jpg']]){const form=manualForm();form.set(key,value);assert.equal((await route.POST(request('/api/products',form))).status,400);}assert.equal(writes,0);
+});
+test('seller Amazon fallback locks preserved link, allows manual content and publishes distinct authorization',()=>{
+ const harness=componentHarness('components/SellerComponents/AddProductForm.tsx',uiState());let nodes=harness.render();nodes.filter(n=>n.type==='input'&&n.props.type==='radio')[1].props.onChange();nodes=harness.render();
+ const url='https://www.amazon.com/dp/B012345678?tag=original-20';nodes.find(n=>n.props.id==='affiliateLink').props.onChange({target:{value:url}});nodes=harness.render();nodes.find(n=>n.props.children==='Fetch Product').props.onClick();
+ harness.state.product.affiliateError='Unavailable';harness.state.product.affiliateFailure={code:'PRODUCT_FETCH_UNAVAILABLE',fallbackToken:'fallback',originalAffiliateUrl:url,provider:'amazon'};harness.render();nodes=harness.render();nodes.find(n=>n.props.children==='Enter Details Manually').props.onClick();nodes=harness.render();
+ assert.equal(nodes.find(n=>n.props.id==='affiliateLink').props.value,url);assert.equal(nodes.find(n=>n.props.id==='affiliateLink').props.disabled,true);assert.equal(nodes.find(n=>n.props.id==='name').props.readOnly,false);
+ for(const [name,value] of [['name','Seller camera'],['price','20']]){nodes.find(n=>n.props.id===name).props.onChange({target:{name,value}});nodes=harness.render();}
+ nodes.find(n=>n.props.id==='description').props.onChange({target:{value:'Seller description'}});nodes.find(n=>n.props.id==='image').props.onChange({target:{files:[new File(['img'],'camera.jpg',{type:'image/jpeg'})]}});nodes.find(n=>n.type==='span'&&n.props.children==='Cameras').props.onClick();nodes=harness.render();nodes.find(n=>n.type==='form').props.onSubmit({preventDefault(){}});
+ const submission=harness.dispatched.at(-1);assert.equal(submission.type,'add');assert.equal(submission.payload.get('affiliateMode'),'manual');assert.equal(submission.payload.get('affiliateLink'),url);assert.equal(submission.payload.get('fallbackToken'),'fallback');assert.equal(submission.payload.get('importToken'),null);assert.equal(submission.payload.get('productType'),'affiliate');
+ nodes.find(n=>n.props.children==='Change Affiliate Link / Start Again').props.onClick();nodes=harness.render();assert.equal(nodes.find(n=>n.props.id==='affiliateLink').props.disabled,false);assert.equal(nodes.find(n=>n.props.children==='Publish Affiliate Product').props.disabled,true);
+});
+test('seller security failures and stale responses cannot offer fallback',()=>{
+ for(const failure of [{code:'INVALID_AFFILIATE_URL'},{code:'PRODUCT_FETCH_UNAVAILABLE',fallbackToken:'token',originalAffiliateUrl:merchantUrl}]){const state=uiState();const harness=componentHarness('components/SellerComponents/AddProductForm.tsx',state);let nodes=harness.render();nodes.filter(n=>n.type==='input'&&n.props.type==='radio')[1].props.onChange();harness.render();state.product.affiliateError='Rejected';state.product.affiliateFailure=failure;harness.render();nodes=harness.render();assert(!nodes.some(n=>n.props.children==='Enter Details Manually'));}
+});
+
+test('published manual affiliate follows View Deal click redirect and rejects cart/order',async()=>{
+ let saved;const create=loader({...authMocks,'@/models/Seller':{findById:async()=>({shopInfo:{shopName:'Shop'}})},'@/models/Product':{create:async data=>(saved={...data,_id:productId})},'@/lib/cloudinary':{uploadToCloudinary:async()=>({secure_url:'https://res.cloudinary.com/manual.jpg'})},'@/lib/safeRemote':{validatePublicUrl:async()=>{}}})('app/api/products/route.ts');
+ assert.equal((await create.POST(request('/api/products',manualForm()))).status,200);
+ const publicData=load('lib/publicProduct.ts').publicProduct(saved);for(const key of ['affiliateLink','costPrice','margin','importToken','fallbackToken'])assert(!Object.hasOwn(publicData,key));
+ const detail=componentHarness('components/StoreComponents/ProductDetail.tsx',uiState({...publicData,id:productId})).render();assert(detail.some(n=>n.props.href==='/api/affiliate/redirect/'+productId));assert(!detail.some(n=>n.props.children==='Add To Cart'));
+ let clicks=0;const redirect=loader({...authMocks,'@/models/Product':{findById:async()=>saved},'@/models/AffiliateClick':{create:async()=>clicks++},'@/lib/safeRemote':{validatePublicUrl:async url=>assert.equal(url,merchantUrl)}})('app/api/affiliate/redirect/[productId]/route.ts');
+ const redirected=await redirect.GET(new NextRequest('https://easymart.example/api/affiliate/redirect/'+productId));assert.equal(redirected.status,302);assert.equal(redirected.headers.get('location'),merchantUrl);assert.equal(clicks,1);
+ let writes=0;const cart=loader({...authMocks,'@/models/Product':{findById:()=>({select:async()=>saved})},'@/models/Card':{findOne:async()=>null,create:async()=>writes++}})('app/api/cart/add-to-cart/route.ts');assert.equal((await cart.POST(request('/api/cart/add-to-cart',{productId,userId:sellerId,quantity:1}))).status,400);
+ const order=loader({...authMocks,'@/models/Product':{find:()=>({select:()=>({lean:async()=>[saved]})})},'@/models/User':{findById:async()=>writes++},'@/models/CustomerOrder':{CustomerOrder:{create:async()=>writes++}}})('app/api/customers/order/route.ts');assert.equal((await order.POST(request('/api/customers/order',{products:[{products:[{productInfo:{_id:productId,productType:'physical'}}]}]}))).status,400);assert.equal(writes,0);
+});
+test('manual publication rechecks DNS even with valid prior fallback authorization',async()=>{
+ let writes=0;const route=loader({...authMocks,'@/models/Seller':{findById:async()=>({shopInfo:{shopName:'Shop'}})},'@/models/Product':{create:async()=>writes++},'@/lib/safeRemote':{validatePublicUrl:async()=>{throw new security.RemoteFetchError('INVALID_AFFILIATE_URL','Private DNS');}}})('app/api/products/route.ts');assert.equal((await route.POST(request('/api/products',manualForm()))).status,400);assert.equal(writes,0);
+});

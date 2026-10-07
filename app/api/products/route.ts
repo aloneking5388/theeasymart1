@@ -4,7 +4,7 @@ import { connectDB } from "@/utils/ConnectDB";
 import { verifyToken } from "@/lib/auth";
 import { uploadToCloudinary } from "@/lib/cloudinary"; // Assuming you have a utility function for Cloudinary upload
 import { generateSlug } from "@/utils/generateSlug";
-import { verifyAffiliateImport } from "@/lib/affiliateImport";
+import { verifyAffiliateImport, verifyAffiliateFallback } from "@/lib/affiliateImport";
 import { safeRemoteFetch, validatePublicUrl } from "@/lib/safeRemote";
 import { publicProduct } from "@/lib/publicProduct";
 import Seller from "@/models/Seller";
@@ -59,27 +59,39 @@ export async function POST(req: NextRequest) {
     const costPrice = costPriceRaw ? parseFloat(costPriceRaw) : undefined;
     const margin = marginRaw ? parseFloat(marginRaw) : undefined;
 
+    const manualAffiliate = isAffiliate && formData.get("affiliateMode") === "manual";
     let importedImages: string[] | null = null;
     if (isAffiliate) {
       try {
         if (!affiliateLink || typeof affiliateLink !== "string") throw new Error();
         await validatePublicUrl(affiliateLink);
-        const receipt = verifyAffiliateImport(String(formData.get("importToken") || ""), user.id, affiliateLink);
-        name = receipt.name || name;
-        description = receipt.description || description;
-        price = receipt.price ?? price;
-        brand = receipt.brand || brand;
-        currency = receipt.currency;
-        importedImages = receipt.images.length ? receipt.images : null;
+        if (manualAffiliate) {
+          verifyAffiliateFallback(String(formData.get("fallbackToken") || ""), user.id, affiliateLink);
+          name = typeof name === "string" ? name.trim() : "";
+          description = typeof description === "string" ? description.trim() : "";
+          brand = typeof brand === "string" ? brand.trim() : "";
+          price = String(formData.get("price") || "").trim() ? Number(formData.get("price")) : NaN;
+          currency = String(formData.get("currency") || "").trim().toUpperCase();
+          if (!/^[A-Z]{3}$/.test(currency)) throw new Error();
+          if (formData.getAll("imageUrls").length) throw new Error();
+        } else {
+          const receipt = verifyAffiliateImport(String(formData.get("importToken") || ""), user.id, affiliateLink);
+          name = receipt.name || name;
+          description = receipt.description || description;
+          price = receipt.price ?? price;
+          brand = receipt.brand || brand;
+          currency = receipt.currency;
+          importedImages = receipt.images.length ? receipt.images : null;
+        }
         stock = 0; discount = 0;
       } catch {
         return NextResponse.json({ error: "Fetch this affiliate URL again before publishing. The import may have expired or the URL is invalid." }, { status: 400 });
       }
-      if (!description || !Number.isFinite(price) || price < 0) return NextResponse.json({ error: "The merchant returned incomplete information. Supply the missing description and price." }, { status: 400 });
+      if (!description || !Number.isFinite(price) || price < 0) return NextResponse.json({ error: manualAffiliate ? "Supply a description and valid merchant price." : "The merchant returned incomplete information. Supply the missing description and price." }, { status: 400 });
     }
 
     // Validate required fields
-    if (!name || isNaN(price) || !category || !brand || isNaN(stock)) {
+    if (!name || isNaN(price) || !category || (!isAffiliate && !brand) || isNaN(stock)) {
       return NextResponse.json(
         { error: "Missing or invalid fields." },
         { status: 400 },

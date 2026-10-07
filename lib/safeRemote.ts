@@ -5,7 +5,7 @@ import { request as httpsRequest } from "node:https";
 import { BlockList } from "node:net";
 
 export class RemoteFetchError extends Error {
-  constructor(public code: string, message: string) { super(message); }
+  constructor(public code: string, message: string, public manualFallbackAllowed = false) { super(message); }
 }
 
 const blocked4 = new BlockList();
@@ -85,7 +85,7 @@ export async function safeRemoteFetch(raw: string, options: RemoteOptions): Prom
           const contentType = (res.headers["content-type"] ?? "").split(";")[0].trim().toLowerCase();
           const permitted = options.kind === "html" ? ["text/html", "application/xhtml+xml"].includes(contentType) : ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"].includes(contentType);
           if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300 || !permitted || (res.headers["content-encoding"] && res.headers["content-encoding"] !== "identity")) {
-            res.destroy(); reject(new RemoteFetchError("PRODUCT_FETCH_UNAVAILABLE", "EasyMart could not retrieve product information from this website.")); return;
+            res.destroy(); reject(new RemoteFetchError("PRODUCT_FETCH_UNAVAILABLE", "EasyMart could not retrieve product information from this website.", options.kind === "html")); return;
           }
           if (Number(res.headers["content-length"]) > maxBytes) { res.destroy(); reject(new RemoteFetchError("PRODUCT_FETCH_TOO_LARGE", "The merchant response is too large.")); return; }
           const chunks: Buffer[] = []; let size = 0;

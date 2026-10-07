@@ -46,7 +46,7 @@ const ProductSchema = new Schema<IProduct>(
     },
     brand: {
       type: String,
-      required: true,
+      required: function (this: IProduct) { return this.productType !== "affiliate"; },
     },
     price: {
       type: Number,

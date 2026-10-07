@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import type { FetchedAffiliateProduct } from "@/types/product";
+import type { FetchedAffiliateProduct, AffiliateFetchFailure } from "@/types/product";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import dynamic from "next/dynamic";
@@ -36,6 +36,7 @@ const AddProductForm = () => {
     affiliateLoader,
     affiliateProduct,
     affiliateError,
+    affiliateFailure,
   } = useAppSelector((state) => state.product);
   const { userInfo } = useAppSelector((state) => state.auth);
 
@@ -60,6 +61,9 @@ const AddProductForm = () => {
 
   const [productType, setProductType] = useState<"physical" | "affiliate">("physical");
   const [imported, setImported] = useState<FetchedAffiliateProduct | null>(null);
+  const [fallback, setFallback] = useState<AffiliateFetchFailure | null>(null);
+  const [manual, setManual] = useState(false);
+  const [currency, setCurrency] = useState("USD");
   const isAffiliate = productType === "affiliate";
   const [affiliateLink, setAffiliateLink] = useState("");
   const [costPrice, setCostPrice] = useState("");
@@ -75,8 +79,8 @@ const AddProductForm = () => {
     try {
       const url = new URL(affiliateLink.trim());
       if (!["http:", "https:"].includes(url.protocol)) throw new Error();
-    } catch { toast.error("Invalid affiliate URL."); return; }
-    setImported(null);
+    } catch { toast.error("Please enter a valid product URL."); return; }
+    setImported(null); setFallback(null); setManual(false);
     dispatch(fetchAffiliateProduct(affiliateLink.trim()));
   };
 
@@ -90,7 +94,7 @@ const AddProductForm = () => {
 
   useEffect(() => {
     if (affiliateProduct && isAffiliate && affiliateProduct.originalAffiliateUrl === affiliateLink.trim()) {
-      setImported(affiliateProduct);
+      setImported(affiliateProduct); setFallback(null); setManual(false);
       setState((prev) => ({
         ...prev,
         name: affiliateProduct.name,
@@ -109,10 +113,11 @@ const AddProductForm = () => {
 
   useEffect(() => {
     if (affiliateError) {
-      toast.error(affiliateError);
+      if (affiliateFailure?.originalAffiliateUrl === affiliateLink.trim() && affiliateFailure?.fallbackToken && affiliateFailure.code === "PRODUCT_FETCH_UNAVAILABLE") setFallback(affiliateFailure);
+      else toast.error(affiliateFailure?.code === "PRODUCT_FETCH_TIMEOUT" ? "The request timed out. Please retry Fetch Product." : affiliateFailure?.code === "INVALID_AFFILIATE_URL" ? "This URL cannot be used for product import." : affiliateError);
       dispatch(clearAffiliateProduct());
     }
-  }, [affiliateError]);
+  }, [affiliateError, affiliateFailure, affiliateLink, dispatch]);
 
   useEffect(() => {
     if (isAffiliate) return;
@@ -203,7 +208,7 @@ const AddProductForm = () => {
   const add = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (loader || affiliateLoader) return;
-    if (isAffiliate && (!imported || imported.originalAffiliateUrl !== affiliateLink.trim())) { toast.error("Fetch this affiliate product before publishing."); return; }
+    if (isAffiliate && !(manual && fallback?.fallbackToken && fallback.originalAffiliateUrl === affiliateLink.trim()) && (!imported || imported.originalAffiliateUrl !== affiliateLink.trim())) { toast.error("Fetch this affiliate product before publishing."); return; }
     if (
       !state.name ||
       !state.price ||
@@ -215,9 +220,16 @@ const AddProductForm = () => {
       return;
     }
 
+    if (manual && (!/^[A-Z]{3}$/.test(currency) || !Number.isFinite(Number(state.price)) || Number(state.price) < 0)) { toast.error("Enter a valid merchant price and three-letter currency code."); return; }
     const formData = new FormData();
     formData.append("productType", productType);
     if (isAffiliate && imported) formData.append("importToken", imported.importToken);
+    if (isAffiliate && manual && fallback) {
+      formData.append("affiliateMode", "manual");
+      formData.append("fallbackToken", fallback.fallbackToken!);
+      formData.append("affiliateLink", fallback.originalAffiliateUrl!);
+      formData.append("currency", currency);
+    }
     formData.append("name", state.name);
     formData.append("description", content);
     formData.append("price", state.price);
@@ -275,7 +287,7 @@ const AddProductForm = () => {
             {(["physical", "affiliate"] as const).map((type) => (
               <label key={type} className="flex items-center gap-2 cursor-pointer">
                 <input type="radio" name="productType" checked={productType === type} onChange={() => {
-                  setProductType(type); setImported(null); setAffiliateImages([]);
+                  setProductType(type); setImported(null); setFallback(null); setManual(false); dispatch(clearAffiliateProduct()); setAffiliateImages([]);
                   setAffiliateLink(""); setCostPrice(""); setMargin(""); setContent("");
                   setImages([]); setImageShow([]);
                   setState({ name: "", description: "", discount: "", price: "", brand: "", stock: "" });
@@ -293,14 +305,14 @@ const AddProductForm = () => {
               <Input
                 id="affiliateLink"
                 value={affiliateLink}
-                disabled={affiliateLoader}
-                onChange={(e) => { setAffiliateLink(e.target.value); setImported(null); setAffiliateImages([]); setContent(""); setState((prev) => ({ ...prev, name: "", brand: "", price: "" })); }}
+                disabled={affiliateLoader || loader || manual}
+                onChange={(e) => { setAffiliateLink(e.target.value); setFallback(null); setManual(false); dispatch(clearAffiliateProduct()); setImported(null); setAffiliateImages([]); setContent(""); setState((prev) => ({ ...prev, name: "", brand: "", price: "" })); }}
                 placeholder="Paste your original merchant affiliate link"
                 className="px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]"
               />
               <Button
                 type="button"
-                disabled={affiliateLoader}
+                disabled={affiliateLoader || loader || manual}
                 onClick={fetchFromAffiliateLink}
                 className="bg-indigo-500 hover:shadow-indigo-500/20 hover:shadow-lg text-white rounded-md px-5 whitespace-nowrap"
               >
@@ -314,6 +326,18 @@ const AddProductForm = () => {
           </div>
         </div>
         <p className="text-sm text-slate-300 mb-4">The merchant handles payment and delivery. Automatic import depends on the metadata the website provides.</p>
+        {fallback && !manual && <div role="status" className="mb-4 rounded-md border border-slate-600 bg-[#283046] p-4 text-slate-200">
+          <p className="font-semibold">{fallback.provider === 'amazon' ? 'Amazon product detected' : 'Automatic product import unavailable'}</p>
+          <p className="my-2">EasyMart couldn't automatically retrieve {fallback.provider === 'amazon' ? "this Amazon product's" : "this product's"} details. Your affiliate link has been preserved. You can enter the product information manually.</p>
+          <Button type="button" disabled={loader || affiliateLoader} onClick={() => { setManual(true); setImported(null); setAffiliateImages([]); setImages([]); setImageShow([]); setContent(""); setState(prev => ({ ...prev, name: "", brand: "", price: "" })); }} className="bg-indigo-500">Enter Details Manually</Button>
+        </div>}
+        {manual && <div className="mb-4 text-slate-200">
+          <p className="font-semibold">Manual Affiliate Product — affiliate link locked</p>
+          <p className="text-sm my-2">These details are seller-supplied and are not merchant-verified. The merchant's actual price may change. Upload images you are authorized to use.</p>
+          <Label htmlFor="currency">Currency</Label>
+          <Input id="currency" value={currency} maxLength={3} onChange={event => setCurrency(event.target.value.toUpperCase())} placeholder="USD" />
+          <Button type="button" disabled={loader || affiliateLoader} onClick={() => { setManual(false); setFallback(null); setImported(null); setContent(""); setAffiliateImages([]); setImages([]); setImageShow([]); setState(prev => ({ ...prev, name: "", brand: "", price: "" })); dispatch(clearAffiliateProduct()); }}>Change Affiliate Link / Start Again</Button>
+        </div>}
         {imported && <p role="status" className="text-sm text-slate-300 mb-4">{!imported.description || imported.price === null || !imported.images.length || !imported.brand ? "Some merchant details are unavailable. Fill in missing required fields; imported fields are locked." : "Merchant details imported and locked."} Currency: {imported.currency || "Not provided"}.</p>}
         </>}
         <div className="flex flex-col mb-3 md:flex-row gap-4 w-full text-[#d0d2d6]">
@@ -549,7 +573,7 @@ const AddProductForm = () => {
         )}
         <div className="flex">
           <Button
-            disabled={loader || affiliateLoader || (isAffiliate && !imported)}
+            disabled={loader || affiliateLoader || (isAffiliate && !imported && !manual)}
             className="bg-blue-500 w-47.5 hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3"
           >
             {loader ? <Loader2 className="animate-spin" /> : isAffiliate ? "Publish Affiliate Product" : "Add product"}

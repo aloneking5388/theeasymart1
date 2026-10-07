@@ -27,6 +27,7 @@ export interface ProductState {
   loader: boolean;
   affiliateLoader: boolean;
   affiliateError: string;
+  affiliateFailure: AffiliateFetchFailure | null;
   affiliateProduct: FetchedAffiliateProduct | null;
   products: Product[];
   latest_product: Product[][];
@@ -97,3 +98,5 @@ export interface FetchedAffiliateProduct {
   originalAffiliateUrl: string;
   importToken: string;
 }
+
+export interface AffiliateFetchFailure { code?: string; message?: string; fallbackToken?: string; originalAffiliateUrl?: string; provider?: 'amazon' | 'other' }

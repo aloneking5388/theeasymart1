@@ -143,3 +143,21 @@ These are single-page observations on 6 October 2026. They do not establish univ
 - Click analytics are basic GET-event records. No views/CTR dashboard, conversion callbacks/postbacks, sales attribution, commission calculation, deduplication or bot filtering is implemented.
 - Physical edit-page issues found during the investigation remain: its description submission uses the old state.description rather than editor content; category is absent from its physical update payload; existing string-based images do not satisfy its File-only replacement condition. Affiliate category updates have a separate correct payload; unrelated physical edit bugs were not expanded into this task.
 - The baseline lint/generated-type problems and live browser/database/Cloudinary/payment verification gates remain open.
+
+
+## Controlled manual fallback (7 October 2026)
+
+The existing automatic importer and signed merchant metadata receipt remain intact. A validated HTML merchant response with unavailable status/type/encoding, or a response without usable Product metadata, may now return a separate one-hour manual-fallback authorization. It contains only seller identity and the original affiliate URL, uses a distinct JWT audience, and is not a metadata receipt. It is never stored on the Product.
+
+Seller flow: Fetch Product -> controlled import unavailable -> Enter Details Manually -> locked original affiliate link -> seller-supplied name, optional brand, EasyMart category, informational merchant price, currency, description and uploaded images -> Publish Affiliate Product. Change Affiliate Link / Start Again discards the fallback/details and requires a new fetch. Publication verifies the authorization and revalidates public DNS before upload/save. Remote image URLs are rejected in manual mode; uploads use the existing Cloudinary workflow. Affiliate stock/discount remain zero and cost/margin remain absent.
+
+Invalid/private URLs, private DNS answers, invalid or excessive redirects, response-size limits, unknown transport errors and timeouts do not grant fallback. Timeouts offer retry only, including DNS timeouts. This intentionally avoids treating an unvalidated or incomplete network operation as fallback eligibility.
+
+Amazon hostname matching uses exact marketplace domains or their subdomains, plus amzn.to/a.co. Lookalikes are not recognized. Provider detection changes only the failure message. No ASIN is extracted or stored because the Product model has no provider-identifier field and fallback does not require it. No Amazon API, browser retrieval, anti-bot bypass or image scraping was introduced.
+
+Manual listings remain productType=affiliate and use the unchanged View Deal -> click record -> original URL redirect. The same cart/order/payment guards apply. Public product APIs still omit affiliate URLs, cost and margin. Seller content is explicitly described as not merchant-verified. Conversion/sale tracking and Amazon Creators API remain unimplemented.
+
+Validation is local and uses isolated route/component fixtures with mocked database, Cloudinary and gateway boundaries. Live merchant compatibility and a real seller browser session were not retested in this phase.
+
+
+Current fallback verification: 61 existing + 11 new = 72 passing tests, 0 failures. The new integration fixture publishes a manual listing, renders its View Deal CTA, records its redirect click, preserves the exact URL and rejects cart/order attempts; the preserved tests also cover physical shipping/orders/payment and affiliate payment/settlement guards. Source-only TypeScript passes with a temporary config excluding generated .next files. Full TypeScript retains stale generated .next/dev/types route errors. The existing next lint script fails because Next.js 16 does not provide that command. The local next build attempt failed fetching the existing Geist and Geist Mono Google Fonts; no successful build is claimed. No deployment, production database write, provider change or live seller/browser test was performed.

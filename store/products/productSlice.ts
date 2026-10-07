@@ -18,6 +18,7 @@ const initialState: ProductState = {
   loader: false,
   affiliateLoader: false,
   affiliateError: "",
+  affiliateFailure: null,
   affiliateProduct: null,
   products: [],
   latest_product: [],
@@ -360,6 +361,7 @@ const productSlice = createSlice({
     clearAffiliateProduct: (state) => {
       state.affiliateProduct = null;
       state.affiliateError = "";
+      state.affiliateFailure = null;
     },
   },
   extraReducers: (builder) => {
@@ -384,6 +386,7 @@ const productSlice = createSlice({
       .addCase(fetchAffiliateProduct.pending, (state) => {
         state.affiliateLoader = true;
         state.affiliateError = "";
+        state.affiliateFailure = null;
       })
       .addCase(
         fetchAffiliateProduct.fulfilled,
@@ -396,6 +399,7 @@ const productSlice = createSlice({
         fetchAffiliateProduct.rejected,
         (state, { payload }: PayloadAction<any>) => {
           state.affiliateLoader = false;
+          state.affiliateFailure = payload || null;
           state.affiliateError =
             payload?.error || "Failed to fetch product details";
         },
